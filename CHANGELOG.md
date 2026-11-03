@@ -1,5 +1,22 @@
 # Changelog
 
+## [2026-11-03 09:40]
+- Dark mode, following the system setting. Colours are now defined by role (`OnyPalette`:
+  page, text on page, outline, block, raised block, text on block, accent, …) with a light
+  and a dark palette; `Ony.*` reads the current one. Dark: deep ink page `#0B1517`, blocks
+  lifted to `#1A2E31` (1.30:1 against the page, so they still read as blocks), light text,
+  soft `#4F676B` row outlines, same lavender. An opened row's border now animates to the
+  block colour, so it never shows a light edge around a dark header.
+- Status and navigation bar icons follow the theme (were pinned dark); `values-night`
+  window colour avoids a white flash; the download page follows `prefers-color-scheme`.
+- `ContrastTest` checks every text/background pair in both palettes against WCAG AA
+  (4.5:1). It caught light mode's muted grey at 4.08:1; darkened `#6B7D80` -> `#5F7174`
+  (4.85:1). Dark mode: 16.4:1 text, 5.6-6.5:1 muted.
+- Files: `Theme.kt`, `Visuals.kt`, `SettingsActivity.kt`, `RouterActivity.kt`,
+  `res/values-night/colors.xml`, `docs/download/index.html`, `ContrastTest.kt` (3 tests).
+- Checked on the phone in dark mode (setup screen, opened key row, redirect card into Apple
+  Music) and again in light mode for regressions; the phone's theme was put back to light.
+
 ## [2026-11-03 09:25]
 - Fix: the download stalled at 11.38 / 11.38 MB. Reproduced on the phone: the APK fully
   arrived (as `.pending-…-Ony-0.1.2.apk`) but a Chrome Custom Tab, the in-app browser apps

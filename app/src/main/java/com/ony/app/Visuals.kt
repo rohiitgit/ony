@@ -65,7 +65,7 @@ fun InkBlock(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
-        modifier.fillMaxWidth().clip(shape).background(Ony.Ink)
+        modifier.fillMaxWidth().clip(shape).background(Ony.Block)
             .padding(start = horizontalPadding, end = horizontalPadding, top = 18.dp, bottom = bottomPadding),
         content = content,
     )
@@ -76,7 +76,7 @@ fun InkBlock(
  * gaps are small rounded notches at the outer edges, like a pinched waist.
  */
 @Composable
-fun Joint(color: Color = Ony.Ink) {
+fun Joint(color: Color = Ony.Block) {
     Canvas(Modifier.fillMaxWidth().height(10.dp)) {
         val g = size.height
         val f = 5.dp.toPx()            // shoulder radius of each notch
@@ -110,8 +110,8 @@ fun OutlineRow(
         onClick = onClick,
         shape = RowShape,
         color = Ony.Page,
-        contentColor = Ony.Ink,
-        border = BorderStroke(1.2.dp, Ony.Ink),
+        contentColor = Ony.OnPage,
+        border = BorderStroke(1.2.dp, Ony.Outline),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(Modifier.heightIn(min = 60.dp).padding(start = 20.dp, end = 13.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -136,13 +136,14 @@ fun UnfoldingRow(
     panelPadding: Dp = 20.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val fill by animateColorAsState(if (open) Ony.Ink else Ony.Page, tween(220), label = "fill")
-    val ink by animateColorAsState(if (open) Ony.OnInk else Ony.Ink, tween(220), label = "ink")
+    val fill by animateColorAsState(if (open) Ony.Block else Ony.Page, tween(220), label = "fill")
+    val ink by animateColorAsState(if (open) Ony.OnBlock else Ony.OnPage, tween(220), label = "ink")
+    val edge by animateColorAsState(if (open) Ony.Block else Ony.Outline, tween(220), label = "edge")
     val lower by animateDpAsState(if (open) Joined else Outer, tween(220), label = "corner")
     val headShape = RoundedCornerShape(Outer, Outer, lower, lower)
     Column {
         Row(
-            Modifier.fillMaxWidth().clip(headShape).background(fill).border(1.2.dp, Ony.Ink, headShape)
+            Modifier.fillMaxWidth().clip(headShape).background(fill).border(1.2.dp, edge, headShape)
                 .clickable(onClick = onToggle).heightIn(min = 60.dp).padding(start = 20.dp, end = 13.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -170,8 +171,8 @@ fun Tag(text: String) {
     Text(
         text.uppercase(),
         style = MaterialTheme.typography.labelLarge,
-        color = Ony.Ink,
-        modifier = Modifier.clip(RoundedCornerShape(7.dp)).background(Ony.Lavender).padding(horizontal = 10.dp, vertical = 5.dp),
+        color = Ony.OnAccent,
+        modifier = Modifier.clip(RoundedCornerShape(7.dp)).background(Ony.Accent).padding(horizontal = 10.dp, vertical = 5.dp),
     )
 }
 
@@ -181,10 +182,10 @@ enum class PillStyle { INK, OUTLINE, LAVENDER, GHOST_ON_INK }
 @Composable
 fun PillButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, style: PillStyle = PillStyle.INK, enabled: Boolean = true) {
     val (bg, fg, border) = when (style) {
-        PillStyle.INK -> Triple(Ony.Ink, Ony.OnInk, null)
-        PillStyle.OUTLINE -> Triple(Ony.Page, Ony.Ink, Ony.Ink)
-        PillStyle.LAVENDER -> Triple(Ony.Lavender, Ony.Ink, null)
-        PillStyle.GHOST_ON_INK -> Triple(Color.Transparent, Ony.OnInk, Ony.InkMuted)
+        PillStyle.INK -> Triple(Ony.Block, Ony.OnBlock, null)
+        PillStyle.OUTLINE -> Triple(Ony.Page, Ony.OnPage, Ony.Outline)
+        PillStyle.LAVENDER -> Triple(Ony.Accent, Ony.OnAccent, null)
+        PillStyle.GHOST_ON_INK -> Triple(Color.Transparent, Ony.OnBlock, Ony.BlockMuted)
     }
     Box(
         modifier.heightIn(min = 48.dp).clip(RowShape).background(bg)
@@ -200,16 +201,16 @@ fun PillButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier,
 fun InkChoice(app: MusicApp, chosen: Boolean, installed: Boolean, onClick: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp))
-            .background(if (chosen) Ony.InkRaised else Color.Transparent)
+            .background(if (chosen) Ony.BlockRaised else Color.Transparent)
             .clickable(enabled = installed, onClick = onClick).alpha(if (installed) 1f else 0.4f)
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AppIcon(app, 34.dp)
-        Text(app.label, style = MaterialTheme.typography.bodyLarge, color = Ony.OnInk, modifier = Modifier.padding(start = 12.dp).weight(1f))
+        Text(app.label, style = MaterialTheme.typography.bodyLarge, color = Ony.OnBlock, modifier = Modifier.padding(start = 12.dp).weight(1f))
         when {
-            chosen -> Icon(Icons.Rounded.Check, contentDescription = "Chosen", tint = Ony.Lavender, modifier = Modifier.size(20.dp))
-            !installed -> Text("Not installed", style = MaterialTheme.typography.bodySmall, color = Ony.InkMuted)
+            chosen -> Icon(Icons.Rounded.Check, contentDescription = "Chosen", tint = Ony.Accent, modifier = Modifier.size(20.dp))
+            !installed -> Text("Not installed", style = MaterialTheme.typography.bodySmall, color = Ony.BlockMuted)
         }
     }
 }
@@ -223,7 +224,7 @@ fun AppIcon(app: MusicApp, size: Dp = 30.dp) {
     if (bitmap != null) {
         Image(bitmap, contentDescription = null, modifier = Modifier.size(size).clip(shape))
     } else {
-        Box(Modifier.size(size).clip(shape).background(Ony.InkRaised))
+        Box(Modifier.size(size).clip(shape).background(Ony.BlockRaised))
     }
 }
 

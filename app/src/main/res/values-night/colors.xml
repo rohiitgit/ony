@@ -1,0 +1,5 @@
+<resources>
+    <!-- Dark page, so launching at night doesn't flash white. -->
+    <color name="ony_background">#0B1517</color>
+    <color name="ony_ink">#10262A</color>
+</resources>

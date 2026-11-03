@@ -2,10 +2,14 @@ package com.ony.app
 
 import android.content.Context
 import android.provider.Settings
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
@@ -15,21 +19,66 @@ import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-/**
- * Ink blocks on a pale page, joined by small bridges, with one soft lavender accent.
- * One palette whatever the system theme: the dark blocks carry the contrast.
- */
+/** Colours by role, so light and dark can differ where they must and match where they can. */
+data class OnyPalette(
+    val page: Color,
+    val onPage: Color,      // text on the page
+    val pageMuted: Color,
+    val outline: Color,     // borders of light rows
+    val block: Color,       // the ink blocks
+    val blockRaised: Color, // fields and chosen items inside a block
+    val onBlock: Color,
+    val blockMuted: Color,
+    val accent: Color,      // lavender
+    val onAccent: Color,
+    val statValue: Color,
+)
+
+/** Ink blocks on a pale page, joined by small bridges, with one soft lavender accent. */
+val LightPalette = OnyPalette(
+    page = Color(0xFFF8F9F6),
+    onPage = Color(0xFF10262A),
+    pageMuted = Color(0xFF5F7174),
+    outline = Color(0xFF10262A),
+    block = Color(0xFF10262A),
+    blockRaised = Color(0xFF1C3539),
+    onBlock = Color(0xFFEEF2F1),
+    blockMuted = Color(0xFF8A9EA3),
+    accent = Color(0xFFD3CCF6),
+    onAccent = Color(0xFF10262A),
+    statValue = Color(0xFFDAD6F6),
+)
+
+/** The same idea at night: a deep ink page, blocks lifted just enough to read as blocks. */
+val DarkPalette = OnyPalette(
+    page = Color(0xFF0B1517),
+    onPage = Color(0xFFEEF2F1),
+    pageMuted = Color(0xFF8A9C9F),
+    outline = Color(0xFF4F676B),
+    block = Color(0xFF1A2E31),
+    blockRaised = Color(0xFF26403F),
+    onBlock = Color(0xFFEEF2F1),
+    blockMuted = Color(0xFF93A7AB),
+    accent = Color(0xFFD3CCF6),
+    onAccent = Color(0xFF10262A),
+    statValue = Color(0xFFDAD6F6),
+)
+
+private val LocalPalette = staticCompositionLocalOf { LightPalette }
+
+/** The current palette's colours, light or dark with the system. */
 object Ony {
-    val Page = Color(0xFFF8F9F6)
-    val Ink = Color(0xFF10262A)
-    val InkRaised = Color(0xFF1C3539)
-    val OnInk = Color(0xFFEEF2F1)
-    val InkMuted = Color(0xFF8A9EA3)
-    val PageMuted = Color(0xFF6B7D80)
-    val Mist = Color(0xFFD8DEDC)
-    val Lavender = Color(0xFFD3CCF6)
-    // Stat values on ink: lavender pale enough to read as light.
-    val LavenderLight = Color(0xFFDAD6F6)
+    val Page: Color @Composable get() = LocalPalette.current.page
+    val OnPage: Color @Composable get() = LocalPalette.current.onPage
+    val PageMuted: Color @Composable get() = LocalPalette.current.pageMuted
+    val Outline: Color @Composable get() = LocalPalette.current.outline
+    val Block: Color @Composable get() = LocalPalette.current.block
+    val BlockRaised: Color @Composable get() = LocalPalette.current.blockRaised
+    val OnBlock: Color @Composable get() = LocalPalette.current.onBlock
+    val BlockMuted: Color @Composable get() = LocalPalette.current.blockMuted
+    val Accent: Color @Composable get() = LocalPalette.current.accent
+    val OnAccent: Color @Composable get() = LocalPalette.current.onAccent
+    val StatValue: Color @Composable get() = LocalPalette.current.statValue
 }
 
 // Variable-font weight settings are still marked experimental in Compose.
@@ -54,20 +103,22 @@ private val OnyType = Typography(
     labelLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Bold, fontSize = 12.sp, lineHeight = 16.sp, letterSpacing = 0.6.sp),
 )
 
-private val OnyScheme = lightColorScheme(
-    primary = Ony.Ink,
-    onPrimary = Ony.OnInk,
-    background = Ony.Page,
-    onBackground = Ony.Ink,
-    surface = Ony.Page,
-    onSurface = Ony.Ink,
-    onSurfaceVariant = Ony.PageMuted,
-    outline = Ony.Ink,
-)
-
 @Composable
 fun OnyTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = OnyScheme, typography = OnyType, content = content)
+    val p = if (isSystemInDarkTheme()) DarkPalette else LightPalette
+    val scheme = (if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()).copy(
+        primary = p.block,
+        onPrimary = p.onBlock,
+        background = p.page,
+        onBackground = p.onPage,
+        surface = p.page,
+        onSurface = p.onPage,
+        onSurfaceVariant = p.pageMuted,
+        outline = p.outline,
+    )
+    CompositionLocalProvider(LocalPalette provides p) {
+        MaterialTheme(colorScheme = scheme, typography = OnyType, content = content)
+    }
 }
 
 /** True when the user switched animations off in Android settings. */

@@ -123,8 +123,8 @@ private fun RedirectCard(link: MusicLink, caught: LinkKind?, tappedAt: Long, onD
         ) {
             Surface(
                 shape = RoundedCornerShape(28.dp),
-                color = Ony.Ink,
-                contentColor = Ony.OnInk,
+                color = Ony.Block,
+                contentColor = Ony.OnBlock,
                 shadowElevation = 12.dp,
                 modifier = Modifier.fillMaxWidth(),
             ) {
@@ -149,13 +149,13 @@ private fun Opening(app: MusicApp?, onCancel: () -> Unit) {
         Row(Modifier.padding(horizontal = 20.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
             if (app != null) AppIcon(app, size = 42.dp)
             Column(Modifier.padding(start = 14.dp).weight(1f)) {
-                Text(app?.let { "Opening in ${it.label}" } ?: "Opening", style = MaterialTheme.typography.titleMedium, color = Ony.OnInk)
-                Text("Finding the song", style = MaterialTheme.typography.bodyMedium, color = Ony.InkMuted)
+                Text(app?.let { "Opening in ${it.label}" } ?: "Opening", style = MaterialTheme.typography.titleMedium, color = Ony.OnBlock)
+                Text("Finding the song", style = MaterialTheme.typography.bodyMedium, color = Ony.BlockMuted)
             }
             PillButton("Cancel", onCancel, style = PillStyle.LAVENDER)
         }
         LinearProgressIndicator(
-            color = Ony.Lavender,
+            color = Ony.Accent,
             trackColor = Color.Transparent,
             modifier = Modifier.fillMaxWidth().height(2.dp),
         )
@@ -166,11 +166,11 @@ private fun Opening(app: MusicApp?, onCancel: () -> Unit) {
 private fun AppQuestion(installed: Set<MusicApp>, onPick: (MusicApp) -> Unit) {
     val choices = Redirect.TARGETS.filter { it in installed }.ifEmpty { Redirect.TARGETS }
     Column(Modifier.padding(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 10.dp)) {
-        Text("Which app do you listen in?", style = MaterialTheme.typography.titleMedium, color = Ony.OnInk, modifier = Modifier.padding(horizontal = 10.dp))
+        Text("Which app do you listen in?", style = MaterialTheme.typography.titleMedium, color = Ony.OnBlock, modifier = Modifier.padding(horizontal = 10.dp))
         Text(
             "Every song link will open there. You can change it in Ony.",
             style = MaterialTheme.typography.bodyMedium,
-            color = Ony.InkMuted,
+            color = Ony.BlockMuted,
             modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 4.dp, bottom = 10.dp),
         )
         choices.forEach { app -> InkChoice(app, chosen = false, installed = true) { onPick(app) } }

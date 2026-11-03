@@ -55,10 +55,10 @@ class SettingsActivity : ComponentActivity() {
     private var returns by mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Pale page whatever the system theme, so the status bar icons stay dark.
+        // Transparent bars; icons flip light or dark with the system theme, like the page.
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
+            statusBarStyle = SystemBarStyle.auto(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.auto(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
         )
         super.onCreate(savedInstanceState)
         setContent { OnyTheme { SetupScreen(returns) } }
@@ -125,7 +125,7 @@ private fun SetupScreen(returns: Int) {
             Text(
                 "ony",
                 style = MaterialTheme.typography.titleLarge,
-                color = Ony.OnInk,
+                color = Ony.OnBlock,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().offset(y = (-2.5).dp),
             )
@@ -145,7 +145,7 @@ private fun SetupScreen(returns: Int) {
             if (stepsLeft == 0) "Tap any song link.\nOny opens it in ${target?.label}."
             else "A few steps, then every song link\nopens in your app.",
             style = MaterialTheme.typography.bodyLarge,
-            color = Ony.Ink,
+            color = Ony.OnPage,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
         )
@@ -164,7 +164,7 @@ private fun SetupScreen(returns: Int) {
                     "Open music links in Ony",
                     onClick = { Launch.openLinkSettings(context, context.packageName) },
                     value = if (linksOn) "On" else "Turn on",
-                    valueColor = if (linksOn) Ony.PageMuted else Ony.Ink,
+                    valueColor = if (linksOn) Ony.PageMuted else Ony.OnPage,
                 )
             }
             grabbers.forEach { kind ->
@@ -172,7 +172,7 @@ private fun SetupScreen(returns: Int) {
                     "Stop ${kind.owner.label} taking links",
                     onClick = { Launch.openLinkSettings(context, kind.owner.packageName) },
                     value = "Turn off",
-                    valueColor = Ony.Ink,
+                    valueColor = Ony.OnPage,
                     icon = { AppIcon(kind.owner, 26.dp) },
                 )
             }
@@ -208,8 +208,8 @@ private fun SetupScreen(returns: Int) {
 @Composable
 private fun Stat(label: String, value: String) {
     Column {
-        Text(label, style = MaterialTheme.typography.bodyMedium, color = Ony.OnInk)
-        Text(value, style = MaterialTheme.typography.headlineSmall, color = Ony.LavenderLight, modifier = Modifier.padding(top = 2.dp))
+        Text(label, style = MaterialTheme.typography.bodyMedium, color = Ony.OnBlock)
+        Text(value, style = MaterialTheme.typography.headlineSmall, color = Ony.StatValue, modifier = Modifier.padding(top = 2.dp))
     }
 }
 
@@ -242,7 +242,7 @@ private fun KeyPanel(savedKey: String, copiedKey: String?, onGetKey: () -> Unit,
     Text(
         "Sign up free, create a key, copy it and come back. Ony fills it in.",
         style = MaterialTheme.typography.bodyMedium,
-        color = Ony.InkMuted,
+        color = Ony.BlockMuted,
     )
     Gap(14.dp)
     if (copiedKey != null) {
@@ -250,19 +250,19 @@ private fun KeyPanel(savedKey: String, copiedKey: String?, onGetKey: () -> Unit,
         Gap(10.dp)
     }
     Row(
-        Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(Ony.InkRaised).padding(start = 16.dp),
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(Ony.BlockRaised).padding(start = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(Modifier.weight(1f).padding(vertical = 15.dp)) {
             if (field.isEmpty()) {
-                Text(if (savedKey.isNotBlank()) "Replace your key" else "Paste your key", style = MaterialTheme.typography.bodyLarge, color = Ony.InkMuted)
+                Text(if (savedKey.isNotBlank()) "Replace your key" else "Paste your key", style = MaterialTheme.typography.bodyLarge, color = Ony.BlockMuted)
             }
             BasicTextField(
                 value = field,
                 onValueChange = { field = it; result = null },
                 singleLine = true,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(color = Ony.OnInk),
-                cursorBrush = SolidColor(Ony.Lavender),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = Ony.OnBlock),
+                cursorBrush = SolidColor(Ony.Accent),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 modifier = Modifier.fillMaxWidth(),
@@ -271,7 +271,7 @@ private fun KeyPanel(savedKey: String, copiedKey: String?, onGetKey: () -> Unit,
         Text(
             "PASTE",
             style = MaterialTheme.typography.labelLarge,
-            color = Ony.Lavender,
+            color = Ony.Accent,
             modifier = Modifier.clickable { Launch.clipboardText(context)?.let { field = it.trim(); result = null } }
                 .padding(horizontal = 16.dp, vertical = 15.dp),
         )
@@ -290,7 +290,7 @@ private fun KeyPanel(savedKey: String, copiedKey: String?, onGetKey: () -> Unit,
                 KeyCheck.UNREACHABLE -> "Couldn't reach MusicLink to check it. Saved anyway."
             },
             style = MaterialTheme.typography.bodySmall,
-            color = if (it == KeyCheck.REJECTED) Ony.Lavender else Ony.InkMuted,
+            color = if (it == KeyCheck.REJECTED) Ony.Accent else Ony.BlockMuted,
         )
     }
 }
