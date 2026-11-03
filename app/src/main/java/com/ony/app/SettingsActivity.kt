@@ -1,6 +1,7 @@
 package com.ony.app
 
 import android.graphics.Color as AndroidColor
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -28,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -55,13 +58,19 @@ class SettingsActivity : ComponentActivity() {
     private var returns by mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Transparent bars; icons flip light or dark with the system theme, like the page.
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.auto(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.auto(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
-        )
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        setContent { OnyTheme { SetupScreen(returns) } }
+        setContent {
+            val dark = rememberDarkTheme()
+            // Bar icons and window follow the app's theme, which can differ from the phone's.
+            LaunchedEffect(dark) {
+                val bars = if (dark) SystemBarStyle.dark(AndroidColor.TRANSPARENT)
+                else SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT)
+                enableEdgeToEdge(statusBarStyle = bars, navigationBarStyle = bars)
+                window.setBackgroundDrawable(ColorDrawable((if (dark) DarkPalette else LightPalette).page.toArgb()))
+            }
+            OnyTheme(dark = dark) { SetupScreen(returns) }
+        }
     }
 
     // Window focus, not onResume: Android only lets the focused app read the clipboard.
@@ -200,6 +209,13 @@ private fun SetupScreen(returns: Int) {
                 onClick = { Launch.fireTestLink(context, Setup.kindsToCatch(target).first().sampleUrl) },
                 modifier = Modifier.fillMaxWidth(),
             )
+        }
+        Gap(28.dp)
+        val mode by remember { Prefs.themeMode(context) }.collectAsState(initial = ThemeMode.AUTO)
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Segmented(ThemeMode.entries.map { it.label }, ThemeMode.entries.indexOf(mode)) { i ->
+                scope.launch { Prefs.setThemeMode(context, ThemeMode.entries[i]) }
+            }
         }
         Gap(24.dp)
     }

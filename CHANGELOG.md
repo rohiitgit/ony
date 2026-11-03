@@ -1,5 +1,15 @@
 # Changelog
 
+## [2026-11-03 09:45]
+- Appearance switch: a segmented pill at the bottom of the setup screen, AUTO | LIGHT | DARK,
+  in the reference's style (ink track, lavender selection). AUTO follows the phone; the
+  choice is saved and applies instantly. The redirect card follows it too, and the setup
+  screen's bar icons and window colour follow the app's theme, not the phone's.
+- `ThemeMode` (tested: AUTO follows the phone, LIGHT/DARK ignore it, unknown saved values
+  fall back to AUTO), `Prefs.themeMode` as a flow, `rememberDarkTheme()`, `Segmented`.
+- Checked on the phone (in light mode): AUTO light, DARK dark with light bar icons, LIGHT,
+  back to AUTO; redirect card dark under DARK. Left on AUTO. 52/52 tests, lint 0 errors.
+
 ## [2026-11-03 09:40]
 - Dark mode, following the system setting. Colours are now defined by role (`OnyPalette`:
   page, text on page, outline, block, raised block, text on block, accent, …) with a light

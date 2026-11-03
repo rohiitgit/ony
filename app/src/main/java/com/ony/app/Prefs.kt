@@ -7,7 +7,9 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import java.time.YearMonth
 
 private val Context.store by preferencesDataStore("ony")
@@ -21,6 +23,7 @@ object Prefs {
     private val KEY_TOTAL_MS = longPreferencesKey("total_redirect_ms")
     private val KEY_LOOKUP_MONTH = stringPreferencesKey("lookup_month")
     private val KEY_LOOKUP_COUNT = intPreferencesKey("lookup_count")
+    private val KEY_THEME = stringPreferencesKey("theme_mode")
 
     suspend fun myApp(context: Context): MusicApp? =
         context.store.data.first()[KEY_MY_APP]?.let { name -> MusicApp.entries.firstOrNull { it.name == name } }
@@ -71,5 +74,13 @@ object Prefs {
             it[KEY_LOOKUP_MONTH] = month
             it[KEY_LOOKUP_COUNT] = count + 1
         }
+    }
+
+    /** The appearance choice, as a stream so the screen restyles the moment it changes. */
+    fun themeMode(context: Context): Flow<ThemeMode> =
+        context.store.data.map { ThemeMode.fromSaved(it[KEY_THEME]) }
+
+    suspend fun setThemeMode(context: Context, mode: ThemeMode) {
+        context.store.edit { it[KEY_THEME] = mode.name }
     }
 }

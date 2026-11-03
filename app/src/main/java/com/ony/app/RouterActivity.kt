@@ -70,7 +70,7 @@ class RouterActivity : ComponentActivity() {
         // A tapped link (not a share) proves Android now hands this kind of link to Ony.
         val caught = if (intent.action == Intent.ACTION_VIEW) Setup.kindOf(intent.dataString) else null
         val tappedAt = SystemClock.elapsedRealtime()
-        setContent { OnyTheme { RedirectCard(link, caught, tappedAt, onDone = ::finish) } }
+        setContent { OnyTheme(dark = rememberDarkTheme()) { RedirectCard(link, caught, tappedAt, onDone = ::finish) } }
     }
 
     private fun incomingText(intent: Intent): String? = when (intent.action) {

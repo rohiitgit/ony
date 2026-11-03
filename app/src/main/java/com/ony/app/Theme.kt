@@ -9,8 +9,12 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -103,10 +107,25 @@ private val OnyType = Typography(
     labelLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Bold, fontSize = 12.sp, lineHeight = 16.sp, letterSpacing = 0.6.sp),
 )
 
+/** The appearance choice on the setup screen. AUTO follows the phone. */
+enum class ThemeMode(val label: String) {
+    AUTO("Auto"), LIGHT("Light"), DARK("Dark");
+
+    fun isDark(systemDark: Boolean): Boolean = when (this) {
+        AUTO -> systemDark
+        LIGHT -> false
+        DARK -> true
+    }
+
+    companion object {
+        fun fromSaved(name: String?): ThemeMode = entries.firstOrNull { it.name == name } ?: AUTO
+    }
+}
+
 @Composable
-fun OnyTheme(content: @Composable () -> Unit) {
-    val p = if (isSystemInDarkTheme()) DarkPalette else LightPalette
-    val scheme = (if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()).copy(
+fun OnyTheme(dark: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+    val p = if (dark) DarkPalette else LightPalette
+    val scheme = (if (dark) darkColorScheme() else lightColorScheme()).copy(
         primary = p.block,
         onPrimary = p.onBlock,
         background = p.page,
@@ -119,6 +138,14 @@ fun OnyTheme(content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalPalette provides p) {
         MaterialTheme(colorScheme = scheme, typography = OnyType, content = content)
     }
+}
+
+/** The saved appearance resolved against the phone's own setting. */
+@Composable
+fun rememberDarkTheme(): Boolean {
+    val context = LocalContext.current
+    val mode by remember { Prefs.themeMode(context) }.collectAsState(initial = ThemeMode.AUTO)
+    return mode.isDark(isSystemInDarkTheme())
 }
 
 /** True when the user switched animations off in Android settings. */
