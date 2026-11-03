@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026-11-03 11:50]
+- Landing page FAQ: an opened question and its answer read as two blocks with a hairline
+  seam and stray dots where the notches should be. Now they're one ink shape, as in the app:
+  square joined corners, page-coloured pill notches cut into both edges of a 12px neck (the
+  hero's technique), and a 2px overlap that covers the 1.2px border so no seam is drawn in
+  light or dark. The answer unfolds with a short fade (none with reduced motion).
+
 ## [2026-11-03 11:35]
 - Landing page at rohiitgit.github.io/ony (`docs/index.html`), in the app's own design: ink
   blocks on a pale page (dark palette in dark mode), lavender accent, Manrope served from the

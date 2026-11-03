@@ -179,17 +179,28 @@
     border-right: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor; transform: rotate(-45deg);
     transition: transform 0.2s ease;
   }
-  details[open] summary { background: var(--block); color: var(--on-block); border-color: var(--block); border-radius: var(--radius-row) var(--radius-row) 12px 12px; }
+  /* Open: question and answer become one ink shape, pinched at the edges like the app's rows. */
+  details[open] summary {
+    background: var(--block); color: var(--on-block); border-color: var(--block);
+    border-radius: var(--radius-row) var(--radius-row) 0 0;
+  }
   details[open] summary::after { transform: rotate(45deg); }
-  details .answer { position: relative; margin-top: 12px; background: var(--block); color: var(--block-muted); border-radius: 12px 12px var(--radius-row) var(--radius-row); padding: 20px 22px 22px; }
-  details .answer::before {
-    content: ""; position: absolute; top: -12px; left: 0; right: 0; height: 12px; background: var(--block);
+  details .answer {
+    position: relative; margin-top: -2px; /* overlap the 1.2px border so no seam is ever drawn */
+    background: var(--block); color: var(--block-muted);
+    border-radius: 0 0 var(--radius-row) var(--radius-row);
+    padding: 34px 22px 22px; /* the first 12px below the overlap are the neck */
+    animation: unfold 0.22s ease-out;
   }
-  details .answer::after {
-    content: ""; position: absolute; top: -12px; left: -15px; right: -15px; height: 12px; pointer-events: none;
-    background: radial-gradient(circle at 15px 6px, var(--page) 6px, transparent 6.5px) left / 30px 12px no-repeat,
-                radial-gradient(circle at 15px 6px, var(--page) 6px, transparent 6.5px) right / 30px 12px no-repeat;
+  /* The notches: page-coloured pills cut into both edges of the neck, as in the hero. */
+  details .answer::before, details .answer::after {
+    content: ""; position: absolute; top: 2px; width: 30px; height: 12px;
+    border-radius: 6px; background: var(--page);
   }
+  details .answer::before { left: -15px; }
+  details .answer::after { right: -15px; }
+  @keyframes unfold { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { details .answer { animation: none; } }
   details .answer p { margin: 0; }
   details .answer p + p { margin-top: 10px; }
   details .answer strong { color: var(--on-block); font-weight: 600; }
