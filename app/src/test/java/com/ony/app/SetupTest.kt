@@ -12,6 +12,12 @@ class SetupTest {
         )
     }
 
+    // No link kind belongs to Meld (its YouTube filters can't be verified), so a Meld listener
+    // needs every kind caught, YouTube Music's too.
+    @Test fun kindsToCatch_meldListenerNeedsEveryKind() {
+        assertEquals(LinkKind.entries, Setup.kindsToCatch(MusicApp.MELD))
+    }
+
     @Test fun kindsToCatch_noAppYetMeansAll() {
         assertEquals(LinkKind.entries, Setup.kindsToCatch(null))
     }

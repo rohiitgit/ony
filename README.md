@@ -12,8 +12,9 @@ stops at 100%, open it in Chrome instead: in-app browsers don't finish APK downl
 
 A friend sends you a Spotify link, but you use Apple Music. Normally that means copying the
 title and searching for it. With Ony, you tap the link and the same song opens in Apple Music.
-It works the same way for YouTube Music, Spotify and Apple Music, whichever one you use and
-whatever kind of link you get.
+It works the same way for YouTube Music, Spotify, Apple Music and
+[Meld](https://github.com/FrancescoGrazioso/Meld), whichever one you use and whatever kind of
+link you get.
 
 You set Ony up once. After that you never open it: a tapped link shows a small "Opening in
 Apple Music…" card for a second or two, then the song plays.
@@ -27,10 +28,11 @@ Android only, for now.
 2. Android hands the link to Ony instead of the app it came from.
 3. Ony opens the same song in your app. No account, no API key.
    - If the link is already from your app, it opens right away.
-   - A YouTube video opens as the same video in YouTube Music.
+   - A YouTube video opens as the same video in YouTube Music or Meld.
    - Otherwise Ony reads the song's title, artist and (where the link has it) album, then
      searches your app's catalogue for **your country** and opens the match. Apple Music
-     uses Apple's public search, YouTube Music its own web search. Spotify has no free
+     uses Apple's public search, YouTube Music its own web search (Meld plays YouTube
+     Music's catalogue, so it uses the same search). Spotify has no free
      search, so Spotify users get Spotify's search for the song, one tap from playing.
 4. If your app doesn't have the song in your country, Ony opens the original link in its
    own app or your browser and tells you.
@@ -48,7 +50,7 @@ phone's region setting, so a phone anywhere searches its own store.
 
 Open Ony from your home screen. It walks you through these steps and shows what's done:
 
-1. **Pick your music app.** If only one of Spotify, Apple Music or YouTube Music is
+1. **Pick your music app.** If only one of Spotify, Apple Music, YouTube Music or Meld is
    installed, Ony picks it for you.
 2. **Let Ony open music links.** Android 12 and later sends each kind of web link to one
    app, with no "Open with" menu, and only you can hand another company's links (Spotify's,

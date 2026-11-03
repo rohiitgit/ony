@@ -1,5 +1,19 @@
 # Changelog
 
+## [2026-11-03 13:20]
+- Meld (open-source YouTube Music client, `com.meld.app`) can be your music app. It plays
+  YouTube Music's catalogue, so YouTube and YouTube Music links open in it as the same video,
+  and Spotify and Apple Music links are matched through the YouTube Music search and opened
+  in Meld. `MusicApp.catalogue` names the catalogue each app plays (Meld: YouTube Music's).
+  Meld always gets the plain `music.youtube.com/watch?v=` URL, since it opens only some
+  YouTube Music paths; a YouTube Music page that isn't a song opens as the original link.
+  Meld is in the app list Ony can see (manifest `<queries>`). The "install a music app"
+  message is built from the app list, so it names Meld too. `Redirect.resolve` takes its
+  network calls as parameters so the search-and-open step is unit-tested.
+  Files: Models.kt, Redirect.kt, RouterActivity.kt, AndroidManifest.xml, RedirectTest.kt,
+  SetupTest.kt, README, landing page.
+- Website: removed the "Try it" page (`docs/try/`) and its footer link.
+
 ## [2026-11-03 11:50]
 - Landing page FAQ: an opened question and its answer read as two blocks with a hairline
   seam and stray dots where the notches should be. Now they're one ink shape, as in the app:

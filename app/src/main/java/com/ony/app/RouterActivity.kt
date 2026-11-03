@@ -93,7 +93,7 @@ private fun RedirectCard(link: MusicLink, caught: LinkKind?, onDone: () -> Unit)
         // NonCancellable: the activity may finish right after, and the write must still land.
         caught?.let { withContext(NonCancellable) { Prefs.markCaught(context, it) } }
         if (Redirect.choices(installed).isEmpty()) {
-            Toast.makeText(context, "Install Spotify, Apple Music or YouTube Music to use Ony.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, Redirect.noAppMessage(), Toast.LENGTH_LONG).show()
             Launch.openOriginal(context, link)
             onDone()
             return@LaunchedEffect

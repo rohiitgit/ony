@@ -3,7 +3,9 @@
 ## Decided
 - 2026-11-03 (v2): Ony is an invisible redirect, not a picker. Tap a music link anywhere,
   the exact song opens in the listener's own app, nobody visits Ony after setup.
-- Target apps: Spotify, Apple Music, YouTube Music. Listener's app = their choice if
+- Target apps: Spotify, Apple Music, YouTube Music, Meld (2026-11-03: Meld is an open-source
+  YouTube Music client, `com.meld.app`; it's searched in YouTube Music's catalogue and opens
+  the same `music.youtube.com/watch` URL). Listener's app = their choice if
   installed, else the only one installed, else ask once on the redirect card.
 - Android 12+ gives web links to one app with no chooser, so setup is required once: allow
   Ony's domains (Open by default) and turn off "Open supported links" for apps that already
