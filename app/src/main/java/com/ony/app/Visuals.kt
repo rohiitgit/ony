@@ -54,7 +54,6 @@ import androidx.compose.ui.unit.dp
 private val Outer = 26.dp
 private val Joined = 12.dp
 private val BlockShape = RoundedCornerShape(Outer)
-val TopBlock = RoundedCornerShape(Outer, Outer, Joined, Joined)
 val BottomBlock = RoundedCornerShape(Joined, Joined, Outer, Outer)
 private val RowShape = RoundedCornerShape(Outer)
 
@@ -64,12 +63,11 @@ fun InkBlock(
     modifier: Modifier = Modifier,
     shape: Shape = BlockShape,
     horizontalPadding: Dp = 20.dp,
-    bottomPadding: Dp = 18.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
         modifier.fillMaxWidth().clip(shape).background(Ony.Block)
-            .padding(start = horizontalPadding, end = horizontalPadding, top = 18.dp, bottom = bottomPadding),
+            .padding(horizontal = horizontalPadding, vertical = 18.dp),
         content = content,
     )
 }

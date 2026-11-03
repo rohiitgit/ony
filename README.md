@@ -58,9 +58,8 @@ Open Ony from your home screen. It walks you through these steps and shows what'
    links**.
 
 The setup screen reads every step's real state from Android, so a row only says "On" when
-that's true. When everything is set, **Play a test song** checks the whole thing, and the
-stats block counts songs opened and the average time. The bar at the bottom picks the look:
-Auto (follows your phone), Light or Dark.
+that's true. When everything is set, **Play a test song** checks the whole thing. The bar at
+the bottom picks the look: Auto (follows your phone), Light or Dark.
 
 ## Build
 
@@ -68,7 +67,7 @@ Needs Android Studio (or the Android SDK) and JDK 17.
 
 ```
 ./gradlew :app:assembleDebug        # APK in app/build/outputs/apk/debug/
-./gradlew :app:testDebugUnitTest    # 66 unit tests
+./gradlew :app:testDebugUnitTest    # 63 unit tests
 ```
 
 Published APKs are built by GitHub Actions (`.github/workflows/build.yml`) on every push to
@@ -87,7 +86,7 @@ app/src/main/java/com/ony/app/
   Resolver.kt          short links, where a link opens, YouTube video to YouTube Music
   LinkParser.kt        URL parser for every supported service
   Launch.kt            Android side: installed apps, opening links, link settings
-  Prefs.kt             your app, appearance and stats (DataStore)
+  Prefs.kt             your app and appearance (DataStore)
   Models.kt            data types
   Theme.kt, Visuals.kt ink-block palette and type, blocks, bridges, rows, pills, app icons
 ```

@@ -43,18 +43,4 @@ class SetupTest {
         assertTrue(Setup.linksAllowed(null, MusicApp.SPOTIFY))
     }
 
-    // "Avg. time" on the setup screen: how long Ony takes from tap to song.
-    @Test fun averageTime_noRedirectsYetIsADash() {
-        assertEquals("–", Setup.averageTime(totalMs = 0, count = 0))
-    }
-
-    @Test fun averageTime_isSecondsWithOneDecimal() {
-        assertEquals("1.4 s", Setup.averageTime(totalMs = 4_200, count = 3))
-        assertEquals("0.3 s", Setup.averageTime(totalMs = 300, count = 1))
-    }
-
-    @Test fun averageTime_roundsHalfUp() {
-        assertEquals("2.1 s", Setup.averageTime(totalMs = 2_050, count = 1))
-    }
-
 }

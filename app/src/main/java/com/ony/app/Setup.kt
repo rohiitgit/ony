@@ -41,11 +41,4 @@ object Setup {
     fun linksAllowed(allowed: Set<String>?, target: MusicApp?): Boolean =
         allowed == null || kindsToCatch(target).all { kind -> kind.hosts.all { it in allowed } }
 
-    /** Mean time from tap to song, "1.4 s", or a dash before the first redirect. */
-    fun averageTime(totalMs: Long, count: Int): String {
-        if (count <= 0) return "–"
-        val tenths = (totalMs * 10 + count * 500L) / (count * 1000L)
-        return "${tenths / 10}.${tenths % 10} s"
-    }
-
 }

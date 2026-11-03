@@ -86,7 +86,6 @@ private fun SetupScreen(returns: Int) {
     var ownLinks by remember { mutableStateOf(emptyMap<MusicApp, Boolean?>()) }
     var caught by remember { mutableStateOf(emptySet<LinkKind>()) }
     var myApp by remember { mutableStateOf<MusicApp?>(null) }
-    var stats by remember { mutableStateOf(0 to 0L) }
     var appOpen by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(returns) {
@@ -95,7 +94,6 @@ private fun SetupScreen(returns: Int) {
         ownLinks = installed.associateWith { Launch.opensOwnLinks(context, it.packageName) }
         caught = Prefs.caughtKinds(context)
         myApp = Prefs.myApp(context)
-        stats = Prefs.stats(context)
     }
 
     val target = Redirect.targetApp(myApp, installed)
@@ -112,7 +110,7 @@ private fun SetupScreen(returns: Int) {
         Modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = BottomBarSpace),
     ) {
-        InkBlock(shape = TopBlock) {
+        InkBlock {
             // Lowercase with a descender sits low in its box; lift it so the "o" centres (measured 2.5 dp).
             Text(
                 "ony",
@@ -121,15 +119,6 @@ private fun SetupScreen(returns: Int) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().offset(y = (-2.5).dp),
             )
-        }
-        Joint()
-        // Digits have no descenders, so 2 dp less padding below makes the space read even (measured).
-        InkBlock(shape = BottomBlock, bottomPadding = 16.dp) {
-            // Spread like the reference: first stat on the left inset, last ending on the right inset.
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Stat("Songs", stats.first.toString())
-                Stat("Avg. time", Setup.averageTime(stats.second, stats.first))
-            }
         }
 
         Text(
@@ -199,11 +188,3 @@ private fun SetupScreen(returns: Int) {
 
 // Bar height (48 dp) + its 16 dp bottom margin + 24 dp of breathing room above it.
 private val BottomBarSpace = 88.dp
-
-@Composable
-private fun Stat(label: String, value: String) {
-    Column {
-        Text(label, style = MaterialTheme.typography.bodyMedium, color = Ony.OnBlock)
-        Text(value, style = MaterialTheme.typography.headlineSmall, color = Ony.StatValue, modifier = Modifier.padding(top = 2.dp))
-    }
-}

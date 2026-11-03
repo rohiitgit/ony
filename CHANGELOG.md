@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026-11-03 10:05]
+- Removed the stats block (songs opened, average time) at the user's request: it didn't help
+  anyone open a song. The header is a single ink block with the wordmark. Also removed what
+  only served it: the open counter and timing in the router, `Setup.averageTime` and its 3
+  tests, the header/stats `TopBlock` shape and `InkBlock`'s bottom-padding option.
+- Checked on the phone. 63/63 tests, lint 0 errors.
+
 ## [2026-11-03 10:00]
 - MusicLink removed entirely: no account, no key, no monthly limit. A user's Apple Music
   link from MusicLink opened "not available in your region": it pointed at the US release

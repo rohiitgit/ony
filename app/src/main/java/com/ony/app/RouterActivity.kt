@@ -2,7 +2,6 @@ package com.ony.app
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.SystemClock
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -69,8 +68,7 @@ class RouterActivity : ComponentActivity() {
         }
         // A tapped link (not a share) proves Android now hands this kind of link to Ony.
         val caught = if (intent.action == Intent.ACTION_VIEW) Setup.kindOf(intent.dataString) else null
-        val tappedAt = SystemClock.elapsedRealtime()
-        setContent { OnyTheme(dark = rememberDarkTheme()) { RedirectCard(link, caught, tappedAt, onDone = ::finish) } }
+        setContent { OnyTheme(dark = rememberDarkTheme()) { RedirectCard(link, caught, onDone = ::finish) } }
     }
 
     private fun incomingText(intent: Intent): String? = when (intent.action) {
@@ -80,7 +78,7 @@ class RouterActivity : ComponentActivity() {
 }
 
 @Composable
-private fun RedirectCard(link: MusicLink, caught: LinkKind?, tappedAt: Long, onDone: () -> Unit) {
+private fun RedirectCard(link: MusicLink, caught: LinkKind?, onDone: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val installed = remember { Launch.installedApps(context) }
@@ -104,7 +102,6 @@ private fun RedirectCard(link: MusicLink, caught: LinkKind?, tappedAt: Long, onD
         val app = target ?: return@LaunchedEffect
         val dest = Redirect.resolve(link, app, Launch.country(context))
         val opened = dest != null && Launch.open(context, dest.url, dest.app.packageName)
-        if (opened) Prefs.recordOpen(context, SystemClock.elapsedRealtime() - tappedAt)
         if (!opened) {
             Toast.makeText(context, "Couldn't find this song in ${app.label}. Opening the original link.", Toast.LENGTH_LONG).show()
             if (!Launch.openOriginal(context, link)) {
