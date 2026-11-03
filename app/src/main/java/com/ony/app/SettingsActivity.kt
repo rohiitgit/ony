@@ -3,6 +3,16 @@ package com.ony.app
 import android.graphics.Color as AndroidColor
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material.icons.rounded.RadioButtonUnchecked
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material3.Icon
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -85,6 +95,9 @@ private fun SetupScreen(returns: Int) {
     var caught by remember { mutableStateOf(emptySet<LinkKind>()) }
     var myApp by remember { mutableStateOf<MusicApp?>(null) }
     var appOpen by rememberSaveable { mutableStateOf(false) }
+    // Setup state isn't known for a moment after opening; wait for it so the prompt never flashes.
+    var loaded by remember { mutableStateOf(false) }
+    var promptDismissed by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(returns) {
         installed = Launch.installedApps(context)
@@ -92,6 +105,7 @@ private fun SetupScreen(returns: Int) {
         ownLinks = installed.associateWith { Launch.opensOwnLinks(context, it.packageName) }
         caught = Prefs.caughtKinds(context)
         myApp = Prefs.myApp(context)
+        loaded = true
     }
 
     val target = Redirect.targetApp(myApp, installed)
@@ -162,6 +176,17 @@ private fun SetupScreen(returns: Int) {
         )
     }
 
+    // Until Ony may open music links, say so up front, every time Ony opens.
+    val domains = allowed
+    if (loaded && domains != null && !linksOn && !promptDismissed) {
+        LinksPrompt(
+            hosts = Setup.kindsToCatch(target).flatMap { it.hosts },
+            on = domains,
+            onOpenSettings = { Launch.openLinkSettings(context, context.packageName) },
+            onLater = { promptDismissed = true },
+        )
+    }
+
     // Bottom bar, as in the reference: stays put while the list scrolls.
     Box(Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp)) {
         Segmented(
@@ -175,3 +200,47 @@ private fun SetupScreen(returns: Int) {
 
 // Bar height (48 dp) + its 16 dp bottom margin + 24 dp of breathing room above it.
 private val BottomBarSpace = 88.dp
+
+/**
+ * The one setup step Android won't let an app do itself: approving Ony for other companies'
+ * links. A sheet with the addresses to switch on, each ticked once it is, and a button to
+ * the right Settings page.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LinksPrompt(hosts: List<String>, on: Set<String>, onOpenSettings: () -> Unit, onLater: () -> Unit) {
+    ModalBottomSheet(
+        onDismissRequest = onLater,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = Ony.Block,
+        contentColor = Ony.OnBlock,
+    ) {
+        Column(Modifier.fillMaxWidth().navigationBarsPadding().padding(start = 24.dp, end = 24.dp, bottom = 24.dp)) {
+            Text("Let Ony open music links", style = MaterialTheme.typography.headlineSmall, color = Ony.OnBlock)
+            Text(
+                "Android asks you to do this once. Tap Open settings, then switch on these addresses.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Ony.BlockMuted,
+                modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
+            )
+            hosts.forEach { host ->
+                val done = host in on
+                Row(Modifier.padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        if (done) Icons.Rounded.CheckCircle else Icons.Rounded.RadioButtonUnchecked,
+                        contentDescription = if (done) "On" else "Off",
+                        tint = if (done) Ony.Accent else Ony.BlockMuted,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Text(host, style = MaterialTheme.typography.bodyLarge, color = Ony.OnBlock, modifier = Modifier.padding(start = 12.dp))
+                }
+            }
+            Row(Modifier.padding(top = 20.dp), verticalAlignment = Alignment.CenterVertically) {
+                PillButton("Open settings", onOpenSettings, modifier = Modifier.weight(1f))
+                TextButton(onClick = onLater, modifier = Modifier.padding(start = 8.dp)) {
+                    Text("LATER", style = MaterialTheme.typography.labelLarge, color = Ony.OnBlock)
+                }
+            }
+        }
+    }
+}

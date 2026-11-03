@@ -1,5 +1,14 @@
 # Changelog
 
+## [2026-11-03 10:18]
+- Setup prompt: when Ony opens and its links aren't all switched on, a sheet explains the
+  one step Android won't let an app do itself, lists the addresses with a tick for each one
+  already on, and has Open settings (straight to Ony's Open by default page) and Later. It
+  returns on every open until done, then never again; it waits for the real state so it
+  never flashes for people who are set up. Android 12+ shows no "Just once / Always"
+  chooser for web links and lets no app approve its own links, so this is the most an app
+  can do.
+
 ## [2026-11-03 10:15]
 - Fewer links to switch on: a new user must approve Ony's web addresses once (Android 12+
   only lets the user hand another company's links to an app; there's no way for an app to do

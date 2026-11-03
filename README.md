@@ -54,7 +54,8 @@ Open Ony from your home screen. It walks you through these steps and shows what'
    app, with no "Open with" menu, and only you can hand another company's links (Spotify's,
    Apple's, YouTube's) to a different app. Tap the row, then switch on all 7 addresses:
    open.spotify.com, spotify.link, music.apple.com, music.youtube.com, youtube.com,
-   www.youtube.com and youtu.be. The row shows how many are on until they all are.
+   www.youtube.com and youtu.be. Until they're all on, Ony opens with a short sheet listing
+   them, ticking each one that's done, with a button straight to the right Settings page.
 3. **Stop other apps grabbing their links.** Apps like YouTube (often preinstalled) open
    their own links before Ony sees them. For each one Ony lists, turn off **Open supported
    links**.
