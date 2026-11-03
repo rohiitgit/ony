@@ -1,5 +1,16 @@
 # Changelog
 
+## [2026-11-03 10:15]
+- Fewer links to switch on: a new user must approve Ony's web addresses once (Android 12+
+  only lets the user hand another company's links to an app; there's no way for an app to do
+  it itself). Ony declared 14; dropped SoundCloud, Deezer, Tidal and Amazon Music, which it
+  can no longer read songs from since MusicLink went, leaving 7.
+- The "Open music links in Ony" row shows progress ("3 of 6 on") instead of "Turn on";
+  `Setup.linksOn` (tested) counts only the addresses Ony needs for the chosen app.
+- README: the 7 addresses by name, and Share → Ony as the no-setup option.
+- Note: the phone now runs a release-signed build, so it's tested with published releases.
+- 64/64 tests, lint 0 errors (6 fewer intent-filter warnings).
+
 ## [2026-11-03 10:08]
 - Header: the full-width ink block around "ony" is gone. With the stats removed it held one
   word and was only decoration; the wordmark is now the header itself, 44 sp Manrope Light

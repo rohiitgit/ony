@@ -133,11 +133,12 @@ private fun SetupScreen(returns: Int) {
                     }
                 }
             }
-            if (allowed != null) {
+            allowed?.let { domains ->
+                val (on, total) = Setup.linksOn(domains, target)
                 OutlineRow(
                     "Open music links in Ony",
                     onClick = { Launch.openLinkSettings(context, context.packageName) },
-                    value = if (linksOn) "On" else "Turn on",
+                    value = if (linksOn) "On" else "$on of $total on",
                     valueColor = if (linksOn) Ony.PageMuted else Ony.OnPage,
                 )
             }

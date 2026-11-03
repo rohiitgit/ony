@@ -51,11 +51,16 @@ Open Ony from your home screen. It walks you through these steps and shows what'
 1. **Pick your music app.** If only one of Spotify, Apple Music or YouTube Music is
    installed, Ony picks it for you.
 2. **Let Ony open music links.** Android 12 and later sends each kind of web link to one
-   app, with no "Open with" menu. Tap **Open Android settings**, then **Add link**, and tick
-   every link.
+   app, with no "Open with" menu, and only you can hand another company's links (Spotify's,
+   Apple's, YouTube's) to a different app. Tap the row, then switch on all 7 addresses:
+   open.spotify.com, spotify.link, music.apple.com, music.youtube.com, youtube.com,
+   www.youtube.com and youtu.be. The row shows how many are on until they all are.
 3. **Stop other apps grabbing their links.** Apps like YouTube (often preinstalled) open
    their own links before Ony sees them. For each one Ony lists, turn off **Open supported
    links**.
+
+Prefer no setup at all? Use **Share → Ony** on any song link instead of tapping it: sharing
+works straight after installing.
 
 The setup screen reads every step's real state from Android, so a row only says "On" when
 that's true. The bar at the bottom picks the look: Auto (follows your phone), Light or Dark.
@@ -100,6 +105,8 @@ converted to vector outlines by `tools/make_icon.py` (needs `pip install fonttoo
   or titled very differently there, opens as the original link instead.
 - Spotify has no free search, so Spotify users land on Spotify's search for the song.
 - The YouTube Music search is unofficial (it's what its web player uses) and could change.
+- Ony reads songs from Spotify, Apple Music, YouTube and YouTube Music links. Links from
+  other services (shared to Ony) open as they are.
 - Playlists belong to one service, so they can't be matched and open as the original link.
 - Installing a music app after setup gives that app its own links back (Android does this
   silently). Open Ony once afterwards: the setup screen shows what to switch back on.

@@ -25,6 +25,12 @@ object Setup {
     fun grabbers(installed: Set<MusicApp>, target: MusicApp?): List<LinkKind> =
         kindsToCatch(target).filter { it.owner in installed }
 
+    /** How many of the link addresses Ony needs are switched on, out of how many: (on, total). */
+    fun linksOn(allowed: Set<String>, target: MusicApp?): Pair<Int, Int> {
+        val needed = kindsToCatch(target).flatMap { it.hosts }
+        return needed.count { it in allowed } to needed.size
+    }
+
     /** Null [allowed] means Android below 12, where the chooser appears and nothing needs allowing. */
     fun linksAllowed(allowed: Set<String>?, target: MusicApp?): Boolean =
         allowed == null || kindsToCatch(target).all { kind -> kind.hosts.all { it in allowed } }

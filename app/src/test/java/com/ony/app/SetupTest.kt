@@ -43,4 +43,12 @@ class SetupTest {
         assertTrue(Setup.linksAllowed(null, MusicApp.SPOTIFY))
     }
 
+
+    // The setup row shows progress, e.g. "3 of 6 on", counting only links Ony must catch.
+    @Test fun linksOn_countsAllowedHostsAmongThoseNeeded() {
+        val needed = Setup.kindsToCatch(MusicApp.YOUTUBE_MUSIC).flatMap { it.hosts }
+        assertEquals(0 to needed.size, Setup.linksOn(emptySet(), MusicApp.YOUTUBE_MUSIC))
+        assertEquals(2 to needed.size, Setup.linksOn(setOf("open.spotify.com", "music.apple.com", "music.youtube.com"), MusicApp.YOUTUBE_MUSIC))
+        assertEquals(needed.size to needed.size, Setup.linksOn(needed.toSet(), MusicApp.YOUTUBE_MUSIC))
+    }
 }

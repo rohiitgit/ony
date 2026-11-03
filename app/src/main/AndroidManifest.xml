@@ -100,35 +100,6 @@
                 <data android:scheme="https" android:host="youtu.be" />
             </intent-filter>
 
-            <!-- SoundCloud / Deezer / Tidal / Amazon -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="soundcloud.com" />
-                <data android:scheme="https" android:host="on.soundcloud.com" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="deezer.com" />
-                <data android:scheme="https" android:host="www.deezer.com" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="tidal.com" />
-                <data android:scheme="https" android:host="listen.tidal.com" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="music.amazon.com" />
-            </intent-filter>
-
             <!-- Share target: the always-reliable path (Share → Ony) -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
