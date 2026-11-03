@@ -11,11 +11,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -110,17 +108,13 @@ private fun SetupScreen(returns: Int) {
         Modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = BottomBarSpace),
     ) {
-        InkBlock {
-            // Lowercase with a descender sits low in its box; lift it so the "o" centres (measured 2.5 dp).
-            Text(
-                "ony",
-                style = MaterialTheme.typography.titleLarge,
-                color = Ony.OnBlock,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().offset(y = (-2.5).dp),
-            )
-        }
-
+        Text(
+            "ony",
+            style = MaterialTheme.typography.displaySmall,
+            color = Ony.OnPage,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(top = 28.dp),
+        )
         Text(
             if (stepsLeft == 0) "Tap any song link.\nOny opens it in ${target?.label}."
             else "A few steps, then every song link\nopens in your app.",
@@ -165,14 +159,6 @@ private fun SetupScreen(returns: Int) {
             color = Ony.PageMuted,
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp),
         )
-
-        if (stepsLeft == 0) {
-            PillButton(
-                "Play a test song",
-                onClick = { Launch.fireTestLink(context, Setup.kindsToCatch(target).first().sampleUrl) },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
     }
 
     // Bottom bar, as in the reference: stays put while the list scrolls.

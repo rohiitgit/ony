@@ -58,8 +58,7 @@ Open Ony from your home screen. It walks you through these steps and shows what'
    links**.
 
 The setup screen reads every step's real state from Android, so a row only says "On" when
-that's true. When everything is set, **Play a test song** checks the whole thing. The bar at
-the bottom picks the look: Auto (follows your phone), Light or Dark.
+that's true. The bar at the bottom picks the look: Auto (follows your phone), Light or Dark.
 
 ## Build
 

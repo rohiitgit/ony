@@ -96,6 +96,8 @@ private fun manrope(weight: Int) = Font(
 private val Manrope = FontFamily(manrope(300), manrope(400), manrope(500), manrope(600), manrope(700))
 
 private val OnyType = Typography(
+    // The wordmark on the setup screen: big and thin, the type itself is the header.
+    displaySmall = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Light, fontSize = 44.sp, lineHeight = 48.sp, letterSpacing = (-1.2).sp),
     headlineSmall = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Normal, fontSize = 26.sp, lineHeight = 30.sp, letterSpacing = (-0.6).sp),
     // The thin wordmark.
     titleLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Light, fontSize = 25.sp, lineHeight = 30.sp, letterSpacing = (-0.6).sp),

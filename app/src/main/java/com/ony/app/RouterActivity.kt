@@ -147,7 +147,7 @@ private fun Opening(app: MusicApp?, onCancel: () -> Unit) {
                 Text(app?.let { "Opening in ${it.label}" } ?: "Opening", style = MaterialTheme.typography.titleMedium, color = Ony.OnBlock)
                 Text("Finding the song", style = MaterialTheme.typography.bodyMedium, color = Ony.BlockMuted)
             }
-            PillButton("Cancel", onCancel, style = PillStyle.LAVENDER)
+            PillButton("Cancel", onCancel)
         }
         LinearProgressIndicator(
             color = Ony.Accent,

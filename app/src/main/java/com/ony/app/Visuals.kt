@@ -166,23 +166,14 @@ fun UnfoldingRow(
     }
 }
 
-/** Pill button with spaced caps: filled ink, outlined, or lavender. */
-enum class PillStyle { INK, OUTLINE, LAVENDER }
-
+/** Lavender pill button with spaced caps (the redirect card's Cancel). */
 @Composable
-fun PillButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, style: PillStyle = PillStyle.INK, enabled: Boolean = true) {
-    val (bg, fg, border) = when (style) {
-        PillStyle.INK -> Triple(Ony.Block, Ony.OnBlock, null)
-        PillStyle.OUTLINE -> Triple(Ony.Page, Ony.OnPage, Ony.Outline)
-        PillStyle.LAVENDER -> Triple(Ony.Accent, Ony.OnAccent, null)
-    }
+fun PillButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(
-        modifier.heightIn(min = 48.dp).clip(RowShape).background(bg)
-            .then(if (border != null) Modifier.border(1.2.dp, border, RowShape) else Modifier)
-            .clickable(enabled = enabled, onClick = onClick).alpha(if (enabled) 1f else 0.45f)
-            .padding(horizontal = 20.dp, vertical = 14.dp),
+        modifier.heightIn(min = 48.dp).clip(RowShape).background(Ony.Accent)
+            .clickable(onClick = onClick).padding(horizontal = 20.dp, vertical = 14.dp),
         contentAlignment = Alignment.Center,
-    ) { Text(text.uppercase(), style = MaterialTheme.typography.labelLarge, color = fg) }
+    ) { Text(text.uppercase(), style = MaterialTheme.typography.labelLarge, color = Ony.OnAccent) }
 }
 
 /**

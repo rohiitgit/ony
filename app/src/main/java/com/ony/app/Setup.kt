@@ -3,23 +3,11 @@ package com.ony.app
 import java.net.URI
 
 /** A kind of music link Ony has to be handed by Android. Hosts must match the manifest. */
-enum class LinkKind(val label: String, val owner: MusicApp, val hosts: List<String>, val sampleUrl: String) {
-    SPOTIFY(
-        "Spotify links", MusicApp.SPOTIFY, listOf("open.spotify.com", "spotify.link"),
-        "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b",
-    ),
-    APPLE_MUSIC(
-        "Apple Music links", MusicApp.APPLE_MUSIC, listOf("music.apple.com"),
-        "https://music.apple.com/us/album/never-gonna-give-you-up/1559885420?i=1559885421",
-    ),
-    YOUTUBE_MUSIC(
-        "YouTube Music links", MusicApp.YOUTUBE_MUSIC, listOf("music.youtube.com"),
-        "https://music.youtube.com/watch?v=dQw4w9WgXcQ",
-    ),
-    YOUTUBE(
-        "YouTube links", MusicApp.YOUTUBE, listOf("youtube.com", "www.youtube.com", "youtu.be"),
-        "https://www.youtube.com/watch?v=9bZkp7q19f0",
-    ),
+enum class LinkKind(val label: String, val owner: MusicApp, val hosts: List<String>) {
+    SPOTIFY("Spotify links", MusicApp.SPOTIFY, listOf("open.spotify.com", "spotify.link")),
+    APPLE_MUSIC("Apple Music links", MusicApp.APPLE_MUSIC, listOf("music.apple.com")),
+    YOUTUBE_MUSIC("YouTube Music links", MusicApp.YOUTUBE_MUSIC, listOf("music.youtube.com")),
+    YOUTUBE("YouTube links", MusicApp.YOUTUBE, listOf("youtube.com", "www.youtube.com", "youtu.be")),
 }
 
 /** Pure answers for the setup screen: what still needs doing. */

@@ -66,14 +66,6 @@ object Launch {
         return state.hostToStateMap.filterValues { it != DomainVerificationUserState.DOMAIN_STATE_NONE }.keys
     }
 
-    /** Sends a link the way a tap in another app does, unpinned, to see who Android hands it to. */
-    fun fireTestLink(context: Context, url: String) {
-        context.startActivity(
-            Intent(Intent.ACTION_VIEW, Uri.parse(url)).addCategory(Intent.CATEGORY_BROWSABLE)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-        )
-    }
-
     /** The listener's country for store searches (rules in [Catalog.countryOf]). */
     fun country(context: Context): String {
         val tm = context.getSystemService(TelephonyManager::class.java)

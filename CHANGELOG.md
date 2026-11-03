@@ -1,5 +1,15 @@
 # Changelog
 
+## [2026-11-03 10:08]
+- Header: the full-width ink block around "ony" is gone. With the stats removed it held one
+  word and was only decoration; the wordmark is now the header itself, 44 sp Manrope Light
+  in ink on the page (light on dark), centred. The dark fill is left for the bottom bar and
+  opened rows, where it means something.
+- Removed the "Play a test song" button (a debugging aid) and what only it used:
+  `Launch.fireTestLink`, `LinkKind.sampleUrl`, and the ink/outline pill styles. `PillButton`
+  is now just the lavender pill the redirect card's Cancel uses.
+- Checked on the phone in light and dark. 63/63 tests, lint 0 errors.
+
 ## [2026-11-03 10:05]
 - Removed the stats block (songs opened, average time) at the user's request: it didn't help
   anyone open a song. The header is a single ink block with the wordmark. Also removed what
