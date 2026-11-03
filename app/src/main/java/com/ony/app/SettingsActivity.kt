@@ -25,6 +25,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.BrightnessAuto
+import androidx.compose.material.icons.rounded.DarkMode
+import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -125,9 +129,13 @@ private fun SetupScreen(returns: Int) {
     val hasKey = savedKey.isNotBlank() || BuildConfig.MUSICLINK_API_KEY.isNotBlank()
     val stepsLeft = listOf(target != null, linksOn, grabbers.isEmpty(), hasKey).count { !it }
 
+    val mode by remember { Prefs.themeMode(context) }.collectAsState(initial = ThemeMode.AUTO)
+
+    Box(Modifier.fillMaxSize().background(Ony.Page).windowInsetsPadding(WindowInsets.safeDrawing)) {
     Column(
-        Modifier.fillMaxSize().background(Ony.Page).windowInsetsPadding(WindowInsets.safeDrawing)
-            .verticalScroll(rememberScrollState()).padding(12.dp),
+        // Bottom padding keeps the end of the list clear of the bottom bar.
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = BottomBarSpace),
     ) {
         InkBlock(shape = TopBlock) {
             // Lowercase with a descender sits low in its box; lift it so the "o" centres (measured 2.5 dp).
@@ -210,16 +218,21 @@ private fun SetupScreen(returns: Int) {
                 modifier = Modifier.fillMaxWidth(),
             )
         }
-        Gap(28.dp)
-        val mode by remember { Prefs.themeMode(context) }.collectAsState(initial = ThemeMode.AUTO)
-        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            Segmented(ThemeMode.entries.map { it.label }, ThemeMode.entries.indexOf(mode)) { i ->
-                scope.launch { Prefs.setThemeMode(context, ThemeMode.entries[i]) }
-            }
-        }
-        Gap(24.dp)
+    }
+
+    // Bottom bar, as in the reference: stays put while the list scrolls.
+    Box(Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp)) {
+        Segmented(
+            icons = listOf(Icons.Rounded.BrightnessAuto, Icons.Rounded.LightMode, Icons.Rounded.DarkMode),
+            labels = ThemeMode.entries.map { it.label },
+            selected = ThemeMode.entries.indexOf(mode),
+        ) { i -> scope.launch { Prefs.setThemeMode(context, ThemeMode.entries[i]) } }
+    }
     }
 }
+
+// Bar height (48 dp) + its 16 dp bottom margin + 24 dp of breathing room above it.
+private val BottomBarSpace = 88.dp
 
 @Composable
 private fun Stat(label: String, value: String) {

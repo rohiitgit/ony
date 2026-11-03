@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026-11-03 09:50]
+- Appearance switch is now an icon bar fixed at the bottom of the setup screen, like the
+  reference's bottom bar: Auto (brightness-auto), Light (sun), Dark (moon), with the words
+  kept as screen-reader labels. The list scrolls above it with 88 dp of bottom padding so
+  its end is never hidden.
+- Checked on the phone: each icon applies its theme, the bar stays put while scrolling.
+
 ## [2026-11-03 09:45]
 - Appearance switch: a segmented pill at the bottom of the setup screen, AUTO | LIGHT | DARK,
   in the reference's style (ink track, lavender selection). AUTO follows the phone; the

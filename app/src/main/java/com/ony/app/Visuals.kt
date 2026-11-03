@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
@@ -199,22 +200,22 @@ fun PillButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier,
 }
 
 /**
- * A segmented pill, as in the reference's bottom control: an ink track with the chosen
- * segment in lavender.
+ * A segmented pill of icons, as in the reference's bottom bar: an ink track with the chosen
+ * segment in lavender. [labels] are read out by screen readers.
  */
 @Composable
-fun Segmented(options: List<String>, selected: Int, onSelect: (Int) -> Unit) {
+fun Segmented(icons: List<ImageVector>, labels: List<String>, selected: Int, onSelect: (Int) -> Unit) {
     Row(Modifier.clip(RowShape).background(Ony.Block).padding(4.dp)) {
-        options.forEachIndexed { i, label ->
+        icons.forEachIndexed { i, icon ->
             val on = i == selected
             val bg by animateColorAsState(if (on) Ony.Accent else Color.Transparent, tween(180), label = "seg$i")
             val fg by animateColorAsState(if (on) Ony.OnAccent else Ony.OnBlock, tween(180), label = "segText$i")
             Box(
                 Modifier.clip(RowShape).background(bg)
                     .selectable(selected = on, role = Role.Tab, onClick = { onSelect(i) })
-                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                    .padding(horizontal = 22.dp, vertical = 10.dp),
                 contentAlignment = Alignment.Center,
-            ) { Text(label.uppercase(), style = MaterialTheme.typography.labelLarge, color = fg) }
+            ) { Icon(icon, contentDescription = labels[i], tint = fg, modifier = Modifier.size(20.dp)) }
         }
     }
 }

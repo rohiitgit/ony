@@ -55,7 +55,7 @@ Open Ony from your home screen. It walks you through these steps and shows what'
 The setup screen reads every step's real state from Android, so a row only says "On" or
 "Added" when that's true. When everything is set, **Play a test song** checks the whole
 thing, and the stats block counts songs opened, the average time, and MusicLink lookups this
-phone made this month (the free plan allows 300). The switch at the bottom picks the look:
+phone made this month (the free plan allows 300). The bar at the bottom picks the look:
 Auto (follows your phone), Light or Dark.
 
 ## Build
