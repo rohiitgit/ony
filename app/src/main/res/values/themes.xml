@@ -1,0 +1,16 @@
+<resources>
+    <!-- Matches the grouped-list background in light and dark, so launch doesn't flash. -->
+    <style name="Theme.Ony" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/ony_background</item>
+    </style>
+
+    <!-- Transparent window for the link router: only its small card is drawn. -->
+    <style name="Theme.Ony.Redirect" parent="Theme.Ony">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

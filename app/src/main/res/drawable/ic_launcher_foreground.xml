@@ -1,0 +1,12 @@
+<!-- "ony" in Manrope 400, converted to outlines (one path per letter), centred on the
+     108 dp adaptive canvas: ink centred horizontally, the "o" centred vertically, inside
+     the 66 dp safe zone. 44 dp wide: about 63% of what Samsung shows, so it has air. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#EEF2F1" android:pathData="M38.8 61.6Q36.7 61.6 35.1 60.6Q33.6 59.6 32.8 57.9Q32 56.2 32 54Q32 51.7 32.8 50Q33.6 48.3 35.2 47.4Q36.7 46.4 38.8 46.4Q40.9 46.4 42.5 47.4Q44 48.4 44.8 50.1Q45.6 51.8 45.6 54Q45.6 56.2 44.8 57.9Q44 59.7 42.4 60.6Q40.9 61.6 38.8 61.6ZM38.8 59.7Q41.2 59.7 42.4 58.1Q43.5 56.5 43.5 54Q43.5 51.4 42.3 49.8Q41.2 48.3 38.8 48.3Q37.2 48.3 36.1 49Q35.1 49.7 34.6 51Q34.1 52.3 34.1 54Q34.1 56.6 35.3 58.1Q36.5 59.7 38.8 59.7Z" />
+    <path android:fillColor="#EEF2F1" android:pathData="M58.9 61.2V53.8Q58.9 52.7 58.6 51.7Q58.4 50.7 57.9 49.9Q57.4 49.2 56.6 48.7Q55.8 48.3 54.7 48.3Q53.7 48.3 52.9 48.7Q52.1 49 51.6 49.7Q51 50.4 50.7 51.3Q50.5 52.3 50.5 53.5L49.1 53.2Q49.1 51 49.9 49.5Q50.6 48 52 47.2Q53.3 46.5 55.1 46.5Q56.4 46.5 57.3 46.9Q58.3 47.3 59 47.9Q59.6 48.6 60.1 49.5Q60.5 50.4 60.7 51.3Q60.8 52.3 60.8 53.3V61.2ZM48.5 61.2V46.8H50.3V50.4H50.5V61.2Z" />
+    <path android:fillColor="#EEF2F1" android:pathData="M66.3 67.5 69.1 60 69.2 62.3 62.9 46.8H64.9L70.1 59.7H69.2L74 46.8H76L68.3 67.5Z" />
+</vector>

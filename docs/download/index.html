@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Download Ony</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #F8F9F6; color: #10262A;
+         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { width: min(360px, 88vw); background: #10262A; color: #EEF2F1; border-radius: 26px; padding: 28px 24px; }
+  h1 { margin: 0 0 6px; font-weight: 300; font-size: 26px; letter-spacing: -0.5px; }
+  p { margin: 0 0 18px; color: #8A9EA3; font-size: 14px; }
+  a.button { display: block; text-align: center; padding: 14px; border-radius: 26px; background: #D3CCF6; color: #10262A;
+             font-weight: 700; font-size: 12px; letter-spacing: .6px; text-transform: uppercase; text-decoration: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>ony</h1>
+  <p id="status">Finding the latest version…</p>
+  <a class="button" id="link" href="https://github.com/rohiitgit/ony/releases/latest">Open the releases page</a>
+</main>
+<script>
+  // Ask GitHub for the newest release and start its Ony-<version>.apk downloading.
+  const status = document.getElementById("status"), link = document.getElementById("link");
+  fetch("https://api.github.com/repos/rohiitgit/ony/releases/latest")
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(release => {
+      const apk = release.assets.find(a => /^Ony-.*\.apk$/.test(a.name));
+      if (!apk) throw new Error("no apk");
+      status.textContent = `Downloading ${apk.name}. Open it on your phone and tap Install.`;
+      link.textContent = `Download ${apk.name}`;
+      link.href = apk.browser_download_url;
+      window.location.href = apk.browser_download_url;
+    })
+    .catch(() => { status.textContent = "Couldn't reach GitHub. Get the newest Ony from the releases page."; });
+</script>
+</body>
+</html>

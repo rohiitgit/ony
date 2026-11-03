@@ -1,0 +1,13 @@
+local.properties
+.gradle/
+build/
+app/build/
+*.iml
+.DS_Store
+# Editor settings and local working notes
+.idea/
+tasks/
+# Release signing keys never go in the repo
+*.jks
+*.keystore
+__pycache__/
