@@ -16,9 +16,15 @@ object Match {
         """\b(remix|live|instrumental|karaoke|cover|lofi|lo fi|sped up|slowed|reverb|acoustic|nightcore|8d|parody|mashup)\b""",
     )
 
-    // Video-title noise that isn't part of the song's name.
+    // Video-title noise that isn't part of the song's name, when it's in brackets.
     private val NOISE = Regex(
         """(?i)\b(official( music| lyric)? (video|audio)|official|lyrics?( video)?|audio|video|visuali[sz]er|hd|4k|m/?v)\b""",
+    )
+
+    // The same noise outside brackets only counts at the very end ("... | Official Video", "... M/V");
+    // in the middle it's part of the title ("Video Games", "Radio Ga Ga").
+    private val TRAILING_NOISE = Regex(
+        """(?i)\s*[|\-]?\s*\b(official( music| lyric)? (video|audio)|lyrics?( video)?|visuali[sz]er|hd|4k|m/?v)\s*$""",
     )
 
     /**
@@ -34,7 +40,7 @@ object Match {
         val matching = candidates.filter { c ->
             closeEnough(baseTitle(c.title), title) &&
                 versions(c.title) == versions &&
-                (artists.isEmpty() || artists.any { it in normalize(c.artist) } || normalize(c.artist) in normalize(wanted.artist))
+                (artists.isEmpty() || artists.any { hasWords(normalize(c.artist), it) } || hasWords(normalize(wanted.artist), normalize(c.artist)))
         }
         val album = wanted.album?.let(::baseAlbum)?.takeIf { it.isNotBlank() }
         return album?.let { a -> matching.firstOrNull { c -> c.album?.let { sameAlbum(baseAlbum(it), a) } == true } }
@@ -61,7 +67,13 @@ object Match {
             val nonLatin = inner.any { it.isLetter() && it.code > 0x24F }
             if (NOISE.containsMatchIn(inner) || nonLatin) " " else m.value
         }
-        return NOISE.replace(noBrackets, " ").replace(Regex("\\s+"), " ").trim()
+        var title = noBrackets.trim()
+        while (true) {
+            val next = TRAILING_NOISE.replace(title, "").trim()
+            if (next == title || next.isEmpty()) break
+            title = next
+        }
+        return title.replace(Regex("\\s+"), " ")
     }
 
     private fun stripBrackets(s: String) = s.replace(Regex("""[(\[][^)\]]*[)\]]"""), " ").replace(Regex("\\s+"), " ").trim()
@@ -96,9 +108,13 @@ object Match {
 
     private fun versions(title: String) = VERSION.findAll(normalize(title)).map { it.value }.toSet()
 
+    // Credit separators only as whole words, so "Daft Punk" and "Fifth Harmony" stay whole.
     private fun artistParts(artist: String) =
-        artist.split(Regex(""",|&| and | x |feat\.?|ft\.?""", RegexOption.IGNORE_CASE))
+        artist.split(Regex(""",|&|\s(?:and|x|with|feat\.?|ft\.?|featuring)\s""", RegexOption.IGNORE_CASE))
             .map(::normalize).filter { it.isNotBlank() }
+
+    // [needle]'s words appear in [haystack] as whole words ("arijit singh" in "mithoon arijit singh").
+    private fun hasWords(haystack: String, needle: String) = needle.isNotBlank() && " $haystack ".contains(" $needle ")
 
     /** Lowercase, accents removed, punctuation to spaces. */
     private fun normalize(s: String): String =

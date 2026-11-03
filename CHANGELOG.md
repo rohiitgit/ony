@@ -1,5 +1,32 @@
 # Changelog
 
+## [2026-11-03 10:50]
+Code review fixes (10 findings).
+- Spotify localized links (`open.spotify.com/intl-de/track/...`) were rejected as "No music
+  link found"; the `intl-xx` part is now skipped.
+- Video-title cleanup removed noise words anywhere, turning "Video Games" into "Games";
+  noise is now only stripped in brackets or at the very end ("... | Official Video", "M/V").
+- Artist credits were split on "ft" inside names ("Daft Punk" -> "da", "punk"), making the
+  artist check match almost anyone; separators now need surrounding spaces, and artist parts
+  must match as whole words.
+- For YouTube links, a video now counts as a song only if YouTube Music's song search has a
+  match; otherwise the original link opens. Fixes Spotify listeners getting a Spotify search
+  for tutorials and vlogs, and makes the YouTube Music request (flagged as wasted for Spotify)
+  the check that decides it. Album comes from the same video's row, else the matching song.
+- The app chosen on the first-time card could be lost: it was saved on a scope that finish()
+  cancels. It's now written inside the redirect, under NonCancellable, before the song opens;
+  the "link kind seen" write likewise.
+- With no music app installed, Ony asked a question it couldn't act on, forever; it now says
+  to install one and opens the original link. The card only offers installed apps.
+- The setup screen refreshed on window focus, which the links prompt's sheet keeps; it now
+  refreshes on resume.
+- CI: releases are tagged at the built commit (`--target $GITHUB_SHA`), and only `main`
+  publishes.
+- Dead code removed: `motionReduced`, `statValue`, `Gap`, the unused `titleLarge` style, a
+  stale MusicLink mention.
+- Tests: 10 new (5 shown failing on the old code first); 73/73 pass, lint 0 errors. Live check:
+  "Me at the zoo" opens as the original link, "Video Games" and the intl link resolve.
+
 ## [2026-11-03 10:18]
 - Setup prompt: when Ony opens and its links aren't all switched on, a sheet explains the
   one step Android won't let an app do itself, lists the addresses with a tick for each one

@@ -62,7 +62,9 @@ object LinkParser {
         return MusicLink(Provider.SPOTIFY, parts[1], parts[2], originalUrl = found)
     }
 
-    private fun parseSpotifyWeb(segments: List<String>, original: String): MusicLink? {
+    private fun parseSpotifyWeb(allSegments: List<String>, original: String): MusicLink? {
+        // Localized share links put a language first: /intl-de/track/<id>.
+        val segments = allSegments.dropWhile { it.startsWith("intl-") }
         if (segments.size < 2 || segments[0] !in spotifyKinds) return null
         val id = segments[1].split(Regex("[^A-Za-z0-9]")).firstOrNull()?.takeIf { it.isNotEmpty() }
             ?: return null

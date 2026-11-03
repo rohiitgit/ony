@@ -28,14 +28,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Invisible link router: a tapped (or shared) music link comes in, the same song opens in
@@ -44,7 +44,8 @@ import kotlinx.coroutines.launch
  * one-time "which app?" question.
  *
  * State: target (the listener's app, null until known), asking (no app known yet), slow.
- * Invariants: finishes after every outcome (opened, fell back, or cancelled).
+ * Invariants: finishes after every outcome (opened, fell back, or cancelled); every write
+ * (the chosen app, the link kind seen) completes before it does.
  */
 class RouterActivity : ComponentActivity() {
 
@@ -80,15 +81,23 @@ class RouterActivity : ComponentActivity() {
 @Composable
 private fun RedirectCard(link: MusicLink, caught: LinkKind?, onDone: () -> Unit) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     val installed = remember { Launch.installedApps(context) }
     var target by remember(link) { mutableStateOf<MusicApp?>(null) }
     var asking by remember(link) { mutableStateOf(false) }
+    // Chosen on the card just now; saved inside the redirect below so finishing can't cancel it.
+    var picked by remember(link) { mutableStateOf<MusicApp?>(null) }
     // Instant redirects finish before this flips, so they never draw anything.
     var slow by remember(link) { mutableStateOf(false) }
 
     LaunchedEffect(link) {
-        caught?.let { Prefs.markCaught(context, it) }
+        // NonCancellable: the activity may finish right after, and the write must still land.
+        caught?.let { withContext(NonCancellable) { Prefs.markCaught(context, it) } }
+        if (Redirect.choices(installed).isEmpty()) {
+            Toast.makeText(context, "Install Spotify, Apple Music or YouTube Music to use Ony.", Toast.LENGTH_LONG).show()
+            Launch.openOriginal(context, link)
+            onDone()
+            return@LaunchedEffect
+        }
         target = Redirect.targetApp(Prefs.myApp(context), installed)
         asking = target == null
     }
@@ -100,6 +109,7 @@ private fun RedirectCard(link: MusicLink, caught: LinkKind?, onDone: () -> Unit)
 
     LaunchedEffect(link, target) {
         val app = target ?: return@LaunchedEffect
+        if (app == picked) withContext(NonCancellable) { Prefs.setMyApp(context, app) }
         val dest = Redirect.resolve(link, app, Launch.country(context))
         val opened = dest != null && Launch.open(context, dest.url, dest.app.packageName)
         if (!opened) {
@@ -124,8 +134,8 @@ private fun RedirectCard(link: MusicLink, caught: LinkKind?, onDone: () -> Unit)
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 if (asking) {
-                    AppQuestion(installed) { app ->
-                        scope.launch { Prefs.setMyApp(context, app) }
+                    AppQuestion(Redirect.choices(installed)) { app ->
+                        picked = app
                         asking = false
                         target = app
                     }
@@ -158,8 +168,7 @@ private fun Opening(app: MusicApp?, onCancel: () -> Unit) {
 }
 
 @Composable
-private fun AppQuestion(installed: Set<MusicApp>, onPick: (MusicApp) -> Unit) {
-    val choices = Redirect.TARGETS.filter { it in installed }.ifEmpty { Redirect.TARGETS }
+private fun AppQuestion(choices: List<MusicApp>, onPick: (MusicApp) -> Unit) {
     Column(Modifier.padding(start = 10.dp, end = 10.dp, top = 20.dp, bottom = 10.dp)) {
         Text("Which app do you listen in?", style = MaterialTheme.typography.titleMedium, color = Ony.OnBlock, modifier = Modifier.padding(horizontal = 10.dp))
         Text(

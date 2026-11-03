@@ -58,4 +58,10 @@ class RedirectTest {
         assertNull(Redirect.instant(spotifyLink, MusicApp.APPLE_MUSIC))
         assertNull(Redirect.instant(ytLink, MusicApp.SPOTIFY))
     }
+
+    // Only installed apps are offered; none installed means there's nothing to ask.
+    @Test fun choices_areTheInstalledTargets() {
+        assertEquals(listOf(MusicApp.APPLE_MUSIC), Redirect.choices(setOf(MusicApp.APPLE_MUSIC, MusicApp.YOUTUBE)))
+        assertTrue(Redirect.choices(setOf(MusicApp.YOUTUBE)).isEmpty())
+    }
 }

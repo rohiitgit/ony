@@ -1,7 +1,5 @@
 package com.ony.app
 
-import android.content.Context
-import android.provider.Settings
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
@@ -35,7 +33,6 @@ data class OnyPalette(
     val blockMuted: Color,
     val accent: Color,      // lavender
     val onAccent: Color,
-    val statValue: Color,
 )
 
 /** Ink blocks on a pale page, joined by small bridges, with one soft lavender accent. */
@@ -50,7 +47,6 @@ val LightPalette = OnyPalette(
     blockMuted = Color(0xFF8A9EA3),
     accent = Color(0xFFD3CCF6),
     onAccent = Color(0xFF10262A),
-    statValue = Color(0xFFDAD6F6),
 )
 
 /** The same idea at night: a deep ink page, blocks lifted just enough to read as blocks. */
@@ -65,7 +61,6 @@ val DarkPalette = OnyPalette(
     blockMuted = Color(0xFF93A7AB),
     accent = Color(0xFFD3CCF6),
     onAccent = Color(0xFF10262A),
-    statValue = Color(0xFFDAD6F6),
 )
 
 private val LocalPalette = staticCompositionLocalOf { LightPalette }
@@ -82,7 +77,6 @@ object Ony {
     val BlockMuted: Color @Composable get() = LocalPalette.current.blockMuted
     val Accent: Color @Composable get() = LocalPalette.current.accent
     val OnAccent: Color @Composable get() = LocalPalette.current.onAccent
-    val StatValue: Color @Composable get() = LocalPalette.current.statValue
 }
 
 // Variable-font weight settings are still marked experimental in Compose.
@@ -99,8 +93,6 @@ private val OnyType = Typography(
     // The wordmark on the setup screen: big and thin, the type itself is the header.
     displaySmall = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Light, fontSize = 44.sp, lineHeight = 48.sp, letterSpacing = (-1.2).sp),
     headlineSmall = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Normal, fontSize = 26.sp, lineHeight = 30.sp, letterSpacing = (-0.6).sp),
-    // The thin wordmark.
-    titleLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Light, fontSize = 25.sp, lineHeight = 30.sp, letterSpacing = (-0.6).sp),
     titleMedium = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Medium, fontSize = 16.sp, lineHeight = 22.sp),
     bodyLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Medium, fontSize = 15.sp, lineHeight = 21.sp),
     bodyMedium = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Normal, fontSize = 14.sp, lineHeight = 20.sp),
@@ -149,7 +141,3 @@ fun rememberDarkTheme(): Boolean {
     val mode by remember { Prefs.themeMode(context) }.collectAsState(initial = ThemeMode.AUTO)
     return mode.isDark(isSystemInDarkTheme())
 }
-
-/** True when the user switched animations off in Android settings. */
-fun motionReduced(context: Context): Boolean =
-    Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f

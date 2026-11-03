@@ -34,8 +34,7 @@ object Catalog {
                     val watch = URLEncoder.encode("https://www.youtube.com/watch?v=$id", "UTF-8")
                     val o = JSONObject(get("https://www.youtube.com/oembed?url=$watch&format=json"))
                     val song = Match.fromVideoTitle(o.optString("title"), o.optString("author_name"))
-                    // The album isn't in oEmbed; YouTube Music's row for this same video has it.
-                    song.copy(album = albumOfVideo(searchYtMusic(song), id))
+                    songFromYouTube(song, searchYtMusic(song), id)
                 }
                 else -> null
             }
@@ -70,6 +69,17 @@ object Catalog {
         parseYtMusic(post("https://music.youtube.com/youtubei/v1/search?prettyPrint=false", body.toString()))
     } catch (_: Exception) {
         emptyList()
+    }
+
+    /**
+     * A YouTube video counts as a song only when YouTube Music's song search has it, so
+     * tutorials and vlogs open as the original link instead of a pointless search. The album
+     * comes from the row for this same video, else from the matching song (a music video's id
+     * differs from its song's). Null means "not a song".
+     */
+    internal fun songFromYouTube(song: Song, rows: List<Match.Candidate>, id: String): Song? {
+        val match = Match.best(rows, song) ?: return null
+        return song.copy(album = albumOfVideo(rows, id) ?: match.album)
     }
 
     /** The album on YouTube Music's search row for video [id], if it's among [rows]. */

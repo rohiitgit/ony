@@ -228,6 +228,3 @@ fun AppIcon(app: MusicApp, size: Dp = 30.dp) {
         Box(Modifier.size(size).clip(shape).background(Ony.BlockRaised))
     }
 }
-
-@Composable
-fun Gap(height: Dp) = Spacer(Modifier.height(height))

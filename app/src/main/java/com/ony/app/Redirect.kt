@@ -11,7 +11,10 @@ object Redirect {
 
     /** The listener's app: their choice if still installed, else the only installed one, else null (ask). */
     fun targetApp(chosen: MusicApp?, installed: Set<MusicApp>): MusicApp? =
-        chosen?.takeIf { it in installed } ?: TARGETS.filter { it in installed }.singleOrNull()
+        chosen?.takeIf { it in installed } ?: choices(installed).singleOrNull()
+
+    /** The apps worth offering: installed targets only. Empty means Ony has nowhere to send songs. */
+    fun choices(installed: Set<MusicApp>): List<MusicApp> = TARGETS.filter { it in installed }
 
     /** A destination in [target] that needs no lookup: the link itself, or a YouTube video in YouTube Music. */
     fun instant(link: MusicLink, target: MusicApp): Destination? =

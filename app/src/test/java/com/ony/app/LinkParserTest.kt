@@ -43,4 +43,12 @@ class LinkParserTest {
         assertEquals(Provider.YOUTUBE, l.provider)
         assertEquals("dQw4w9WgXcQ", l.id)
     }
+
+    // Spotify hands out localized links: open.spotify.com/intl-de/track/<id>.
+    @Test fun spotifyLocalizedLinkIsATrack() {
+        val l = LinkParser.parse("https://open.spotify.com/intl-de/track/0VjIjW4GlUZAMYd2vXMi3b?si=abc")!!
+        assertEquals(Provider.SPOTIFY, l.provider)
+        assertEquals("track", l.kind)
+        assertEquals("0VjIjW4GlUZAMYd2vXMi3b", l.id)
+    }
 }

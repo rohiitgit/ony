@@ -20,7 +20,6 @@ class ContrastTest {
             "text on block" to (p.onBlock to p.block),
             "muted text on block" to (p.blockMuted to p.block),
             "text on raised block" to (p.onBlock to p.blockRaised),
-            "stat values on block" to (p.statValue to p.block),
             "text on lavender" to (p.onAccent to p.accent),
             "lavender on block" to (p.accent to p.block),
         )

@@ -54,8 +54,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 /**
- * One-time setup, opened from the launcher. Re-reads system state whenever Ony regains
- * focus, because the user leaves for Android settings, MusicLink, or a test link.
+ * One-time setup, opened from the launcher. Re-reads system state every time Ony resumes,
+ * because the user leaves for Android settings and comes back.
  */
 class SettingsActivity : ComponentActivity() {
 
@@ -77,10 +77,11 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
-    // Re-read setup state when Ony comes back into view (from Android settings or a test link).
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) returns++
+    // onResume, not window focus: with the links prompt open, focus returns to the sheet's own
+    // window, but the activity still resumes, so the ticks and count stay current.
+    override fun onResume() {
+        super.onResume()
+        returns++
     }
 }
 

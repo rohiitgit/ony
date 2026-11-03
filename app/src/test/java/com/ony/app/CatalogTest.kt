@@ -119,4 +119,25 @@ class CatalogTest {
     @Test fun countryOf_ignoresValuesThatAreNotCountryCodes() {
         assertEquals("fr", Catalog.countryOf(sim = "001", network = "fr", region = "US"))
     }
+
+    // A YouTube video counts as a song only if YouTube Music's song search has it; tutorials
+    // and vlogs then open as the original link instead of a pointless search.
+    @Test fun songFromYouTube_nonMusicVideoIsNull() {
+        val rows = listOf(Match.Candidate("Some Song", "Some Artist", "https://music.youtube.com/watch?v=aaa", album = "X"))
+        assertNull(Catalog.songFromYouTube(Song("How to fix a bike chain", "Bike Guy"), rows, "vid123"))
+    }
+
+    @Test fun songFromYouTube_takesTheAlbumOfTheSameVideoFirst() {
+        val rows = listOf(
+            Match.Candidate("Asi Gabru Punjabi", "Amrinder Gill", "https://music.youtube.com/watch?v=other", album = "Hits"),
+            Match.Candidate("Asi Gabru Punjabi", "Amrinder Gill", "https://music.youtube.com/watch?v=HtM_QDwghx8", album = "Judda"),
+        )
+        assertEquals("Judda", Catalog.songFromYouTube(Song("Asi Gabru Punjabi", "Amrinder Gill"), rows, "HtM_QDwghx8")?.album)
+    }
+
+    // A music video's id differs from the song's; the matching song row supplies the album.
+    @Test fun songFromYouTube_musicVideoUsesTheMatchingSong() {
+        val rows = listOf(Match.Candidate("Gangnam Style", "PSY", "https://music.youtube.com/watch?v=audio1", album = "Six Rules"))
+        assertEquals(Song("GANGNAM STYLE", "PSY", "Six Rules"), Catalog.songFromYouTube(Song("GANGNAM STYLE", "PSY"), rows, "9bZkp7q19f0"))
+    }
 }

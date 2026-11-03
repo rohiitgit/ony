@@ -127,4 +127,29 @@ class MatchTest {
     @Test fun best_oneLetterTitleNeedsTheSameArtist() {
         assertNull(Match.best(listOf(c("Asi Gabhru Punjabi", "Someone Else")), Song("Asi Gabru Punjabi", "Amrinder Gill")))
     }
+
+    // Noise words are only noise in brackets or at the end; "Video Games" is a song title.
+    @Test fun fromVideoTitle_keepsNoiseWordsThatArePartOfTheTitle() {
+        assertEquals(
+            Song("Video Games", "Lana Del Rey"),
+            Match.fromVideoTitle("Lana Del Rey - Video Games (Official Music Video)", "LanaDelRey"),
+        )
+        assertEquals(Song("Radio Ga Ga", "Queen"), Match.fromVideoTitle("Queen - Radio Ga Ga (Official Video)", "Queen Official"))
+    }
+
+    @Test fun fromVideoTitle_dropsTrailingNoiseOutsideBrackets() {
+        assertEquals(Song("Tum Hi Ho", "Arijit Singh"), Match.fromVideoTitle("Arijit Singh - Tum Hi Ho | Official Video", "T-Series"))
+    }
+
+    // "ft" inside a name (Daft Punk, Fifth Harmony) is not a featuring credit.
+    @Test fun best_doesNotSplitArtistNamesContainingFt() {
+        assertNull(Match.best(listOf(c("Get Lucky", "Adam Young")), Song("Get Lucky", "Daft Punk")))
+        assertNotNull(Match.best(listOf(c("Get Lucky", "Daft Punk feat. Pharrell Williams")), Song("Get Lucky", "Daft Punk")))
+    }
+
+    @Test fun best_artistPartsMatchWholeWords() {
+        // "Sofia" must not count as containing "fi".
+        assertNull(Match.best(listOf(c("Work from Home", "Sofia Carson")), Song("Work from Home", "Fifth Harmony ft. Ty Dolla Sign")))
+        assertNotNull(Match.best(listOf(c("Work from Home", "Fifth Harmony")), Song("Work from Home", "Fifth Harmony ft. Ty Dolla Sign")))
+    }
 }
