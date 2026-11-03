@@ -21,17 +21,27 @@
   <a class="button" id="link" href="https://github.com/rohiitgit/ony/releases/latest">Open the releases page</a>
 </main>
 <script>
-  // Ask GitHub for the newest release and start its Ony-<version>.apk downloading.
+  // Find the newest release's Ony-<version>.apk. On Android the button hands the download to
+  // the browser app: in-app browsers (Chrome Custom Tabs opened from WhatsApp, GitHub, etc.)
+  // receive the whole APK but never finish the download. Elsewhere it's a plain link.
   const status = document.getElementById("status"), link = document.getElementById("link");
+  const android = /Android/i.test(navigator.userAgent);
   fetch("https://api.github.com/repos/rohiitgit/ony/releases/latest")
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
     .then(release => {
       const apk = release.assets.find(a => /^Ony-.*\.apk$/.test(a.name));
       if (!apk) throw new Error("no apk");
-      status.textContent = `Downloading ${apk.name}. Open it on your phone and tap Install.`;
+      const url = apk.browser_download_url;
       link.textContent = `Download ${apk.name}`;
-      link.href = apk.browser_download_url;
-      window.location.href = apk.browser_download_url;
+      if (android) {
+        const target = url.replace(/^https:\/\//, "");
+        link.href = `intent://${target}#Intent;scheme=https;action=android.intent.action.VIEW;` +
+                    `S.browser_fallback_url=${encodeURIComponent(url)};end`;
+        status.textContent = "Tap to download in your browser, then open the file and tap Install.";
+      } else {
+        link.href = url;
+        status.textContent = `Ony ${release.tag_name.replace(/^v/, "")} for Android.`;
+      }
     })
     .catch(() => { status.textContent = "Couldn't reach GitHub. Get the newest Ony from the releases page."; });
 </script>

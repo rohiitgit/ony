@@ -5,7 +5,8 @@ Tap any song link and it opens in **your** music app.
 **[Download the latest Ony for Android](https://rohiitgit.github.io/ony/download/)** (saves as `Ony-<version>.apk`)
 
 Open the download on your phone and tap Install (allow your browser to install apps if
-Android asks). New versions install over old ones and keep your settings. Every push to
+Android asks). If you opened the link inside another app (WhatsApp, GitHub) and the download
+stops at 100%, open it in Chrome instead: in-app browsers don't finish APK downloads. New versions install over old ones and keep your settings. Every push to
 `main` builds a new one; past versions are on the
 [Releases page](https://github.com/rohiitgit/ony/releases).
 

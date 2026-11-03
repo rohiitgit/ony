@@ -1,5 +1,14 @@
 # Changelog
 
+## [2026-11-03 09:25]
+- Fix: the download stalled at 11.38 / 11.38 MB. Reproduced on the phone: the APK fully
+  arrived (as `.pending-…-Ony-0.1.2.apk`) but a Chrome Custom Tab, the in-app browser apps
+  like WhatsApp and GitHub open, never committed it; the same URL in full Chrome finished in
+  under 4 s. GitHub's response was correct (full length, APK content type, right filename).
+- `docs/download/`: no automatic download any more. On Android the button is an `intent://`
+  link that hands the APK URL to the browser app, with a plain-URL fallback; on desktop it
+  stays a direct link. README notes what to do if a download stops at 100%.
+
 ## [2026-11-03 09:10]
 - Open source under MIT (`LICENSE`), published as github.com/rohiitgit/ony.
 - CI: `.github/workflows/build.yml` runs the unit tests, builds a release APK signed with the
