@@ -1,5 +1,10 @@
 # Changelog
 
+## [2026-11-03 22:55]
+- Landing page "Works with": two chip rows, "Links from" (Spotify, Apple Music, YouTube
+  Music, YouTube) and "Open in" as ink chips (Spotify, Apple Music, YouTube Music, Meld), so
+  Meld support is visible at a glance.
+
 ## [2026-11-03 13:20]
 - Meld (open-source YouTube Music client, `com.meld.app`) can be your music app. It plays
   YouTube Music's catalogue, so YouTube and YouTube Music links open in it as the same video,
