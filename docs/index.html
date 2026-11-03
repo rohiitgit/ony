@@ -1,5 +1,345 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
-<title>Ony</title>
-<meta http-equiv="refresh" content="0; url=https://github.com/rohiitgit/ony">
-<a href="https://github.com/rohiitgit/ony">Ony on GitHub</a>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ony: every song link, in your music app</title>
+<meta name="description" content="Friends send Spotify, you use Apple Music? Tap the link and Ony opens the same song in your app. Free and open source for Android.">
+<meta property="og:title" content="Ony: every song link, in your music app">
+<meta property="og:description" content="Tap any Spotify, Apple Music, YouTube Music or YouTube link and the same song opens where you listen. Free, open source, Android.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#F8F9F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1517" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2310262A'/%3E%3Ctext x='32' y='38' font-family='system-ui,sans-serif' font-size='22' font-weight='300' fill='%23EEF2F1' text-anchor='middle'%3Eony%3C/text%3E%3C/svg%3E">
+<style>
+  /* Manrope, served from this site (no third-party requests). SIL Open Font License: fonts/OFL.txt */
+  @font-face {
+    font-family: "Manrope";
+    src: url("fonts/manrope.ttf") format("truetype");
+    font-weight: 200 800;
+    font-display: swap;
+  }
+
+  /* The app's own palettes: ink blocks on a pale page, one lavender accent. */
+  :root {
+    --page: #F8F9F6;
+    --text: #10262A;
+    --muted: #5F7174;
+    --outline: #10262A;
+    --block: #10262A;
+    --raised: #1C3539;
+    --on-block: #EEF2F1;
+    --block-muted: #8A9EA3;
+    --accent: #D3CCF6;
+    --on-accent: #10262A;
+    --radius-block: 32px;
+    --radius-row: 28px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #0B1517;
+      --text: #EEF2F1;
+      --muted: #8A9C9F;
+      --outline: #4F676B;
+      --block: #1A2E31;
+      --raised: #26403F;
+      --block-muted: #93A7AB;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font: 400 17px/1.55 "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+  .wrap { width: min(1120px, 100% - 32px); margin-inline: auto; }
+
+  /* Top bar */
+  header.top { display: flex; align-items: center; justify-content: space-between; padding: 22px 4px; }
+  .wordmark { font-weight: 300; font-size: 30px; letter-spacing: -0.04em; text-decoration: none; line-height: 1; }
+  .top nav a { font-size: 15px; font-weight: 500; text-decoration: none; padding: 8px 4px; }
+  .top nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+  /* Ink stack: hero and "how it works" pinched together, like the app's blocks */
+  .stack { background: var(--block); color: var(--on-block); border-radius: var(--radius-block); }
+  .pinch { position: relative; height: 12px; }
+  .pinch::before, .pinch::after {
+    content: ""; position: absolute; top: 0; width: 30px; height: 12px;
+    border-radius: 6px; background: var(--page);
+  }
+  .pinch::before { left: -15px; }
+  .pinch::after { right: -15px; }
+
+  .hero { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; align-items: center; padding: 64px 56px 56px; }
+  .hero h1 {
+    margin: 0; font-weight: 300; letter-spacing: -0.035em; line-height: 1.02;
+    font-size: clamp(42px, 6.4vw, 78px);
+  }
+  .hero p.lead { margin: 22px 0 32px; max-width: 30em; color: var(--block-muted); font-size: 18px; }
+  .hero p.lead strong { color: var(--on-block); font-weight: 600; }
+
+  .cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+  .pill {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 28px;
+    border-radius: var(--radius-row); background: var(--accent); color: var(--on-accent);
+    font-weight: 700; font-size: 13px; letter-spacing: 0.07em; text-transform: uppercase; text-decoration: none;
+    transition: transform 0.15s ease;
+  }
+  .pill:hover { transform: translateY(-1px); }
+  .pill:active { transform: translateY(0); }
+  .cta small { color: var(--block-muted); font-size: 14px; }
+
+  /* The phone: a friend's link is tapped and Ony's card slides up */
+  .phone {
+    justify-self: center; width: min(290px, 100%); aspect-ratio: 9 / 16.5; border-radius: 44px;
+    background: var(--page); color: var(--text); border: 9px solid #071214; position: relative; overflow: hidden;
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.55);
+  }
+  @media (prefers-color-scheme: dark) { .phone { border-color: #000; } }
+  .chat-head { padding: 26px 18px 12px; font-size: 13px; font-weight: 600; border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent); }
+  .chat-head span { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+  .day { margin: 16px 0 0; text-align: center; font-size: 11px; color: var(--muted); }
+  .bubble {
+    margin: 10px 16px 0; max-width: 85%; padding: 10px 12px 11px; border-radius: 16px 16px 16px 4px;
+    background: color-mix(in srgb, var(--text) 7%, var(--page)); font-size: 13.5px; line-height: 1.4;
+  }
+  .bubble .link { display: block; margin-top: 4px; color: #3B6FD8; text-decoration: underline; text-underline-offset: 2px; word-break: break-all; position: relative; }
+  @media (prefers-color-scheme: dark) { .bubble .link { color: #8DB3FF; } }
+  .tap {
+    position: absolute; width: 34px; height: 34px; border-radius: 50%; background: var(--accent);
+    left: 38%; top: 140px; opacity: 0; transform: scale(0.4);
+    animation: tap 7s ease-out infinite;
+  }
+  .card {
+    position: absolute; left: 10px; right: 10px; bottom: 14px; border-radius: 24px; overflow: hidden;
+    background: var(--block); color: var(--on-block); padding: 14px 14px 16px;
+    display: grid; grid-template-columns: 40px 1fr; gap: 0 12px; align-items: center;
+    transform: translateY(140%); animation: card 7s cubic-bezier(.2, .8, .2, 1) infinite;
+  }
+  .card .icon { grid-row: span 2; width: 40px; height: 40px; border-radius: 11px; background: #fff; display: grid; place-items: center; }
+  .card .icon svg { width: 22px; height: 22px; }
+  .card .t { font-size: 14px; font-weight: 600; line-height: 1.3; white-space: nowrap; }
+  .card .s { font-size: 12px; color: var(--block-muted); }
+  .card .bar { position: absolute; left: 0; bottom: 0; height: 2px; background: var(--accent); width: 0; animation: bar 7s ease-in-out infinite; }
+
+  @keyframes tap { 0%, 12% { opacity: 0; transform: scale(0.4); } 15% { opacity: 0.55; transform: scale(1); } 22%, 100% { opacity: 0; transform: scale(1.6); } }
+  @keyframes card { 0%, 20% { transform: translateY(140%); } 27%, 86% { transform: translateY(0); } 93%, 100% { transform: translateY(140%); } }
+  @keyframes bar { 0%, 26% { width: 0; } 80% { width: 100%; } 100% { width: 100%; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tap, .card, .card .bar { animation: none; }
+    .card { transform: none; }
+    .card .bar { width: 60%; }
+  }
+
+  /* How it works: a real sequence, so it's numbered */
+  .how { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; padding: 40px 56px 48px; margin: 0; list-style: none; }
+  .how li { counter-increment: step; }
+  .how li::before {
+    content: counter(step); display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--raised); color: var(--accent); font-weight: 700; font-size: 13px; margin-bottom: 14px;
+  }
+  .how h3 { margin: 0 0 6px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+  .how p { margin: 0; color: var(--block-muted); font-size: 15.5px; }
+
+  /* Sections on the page */
+  section.plain { padding: 72px 4px 0; }
+  section.plain h2 { margin: 0 0 8px; font-weight: 300; font-size: clamp(30px, 4vw, 44px); letter-spacing: -0.03em; line-height: 1.1; }
+  section.plain > p.intro { margin: 0 0 28px; color: var(--muted); max-width: 38em; }
+
+  .apps { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .apps li { border: 1.2px solid var(--outline); border-radius: var(--radius-row); padding: 12px 20px; font-weight: 500; font-size: 15.5px; }
+
+  .rows { display: grid; gap: 10px; }
+  .row {
+    display: flex; align-items: center; gap: 16px; border: 1.2px solid var(--outline); border-radius: var(--radius-row);
+    padding: 18px 22px; min-height: 64px;
+  }
+  .row .n { color: var(--muted); font-weight: 600; font-size: 14px; width: 1.2em; }
+  .row .label { flex: 1; font-weight: 500; }
+  .row .label small { display: block; color: var(--muted); font-weight: 400; font-size: 14.5px; margin-top: 2px; }
+  .row .state { color: var(--muted); font-size: 15px; }
+
+  /* FAQ rows open into ink panels, like the app's rows */
+  details { border-radius: var(--radius-row); }
+  details summary {
+    list-style: none; cursor: pointer; display: flex; align-items: center; gap: 16px;
+    border: 1.2px solid var(--outline); border-radius: var(--radius-row); padding: 18px 22px; min-height: 64px; font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, border-radius 0.2s ease;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: ""; margin-left: auto; width: 9px; height: 9px; flex: none;
+    border-right: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor; transform: rotate(-45deg);
+    transition: transform 0.2s ease;
+  }
+  details[open] summary { background: var(--block); color: var(--on-block); border-color: var(--block); border-radius: var(--radius-row) var(--radius-row) 12px 12px; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details .answer { position: relative; margin-top: 12px; background: var(--block); color: var(--block-muted); border-radius: 12px 12px var(--radius-row) var(--radius-row); padding: 20px 22px 22px; }
+  details .answer::before {
+    content: ""; position: absolute; top: -12px; left: 0; right: 0; height: 12px; background: var(--block);
+  }
+  details .answer::after {
+    content: ""; position: absolute; top: -12px; left: -15px; right: -15px; height: 12px; pointer-events: none;
+    background: radial-gradient(circle at 15px 6px, var(--page) 6px, transparent 6.5px) left / 30px 12px no-repeat,
+                radial-gradient(circle at 15px 6px, var(--page) 6px, transparent 6.5px) right / 30px 12px no-repeat;
+  }
+  details .answer p { margin: 0; }
+  details .answer p + p { margin-top: 10px; }
+  details .answer strong { color: var(--on-block); font-weight: 600; }
+
+  .closing { margin: 80px 0 0; text-align: center; }
+  .closing h2 { margin: 0 0 22px; font-weight: 300; font-size: clamp(30px, 4vw, 44px); letter-spacing: -0.03em; }
+
+  footer { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; align-items: center; padding: 56px 4px 40px; color: var(--muted); font-size: 14.5px; }
+  footer nav { display: flex; gap: 20px; }
+
+  @media (max-width: 820px) {
+    .hero { grid-template-columns: 1fr; padding: 40px 26px 36px; gap: 36px; }
+    .how { grid-template-columns: 1fr; padding: 30px 26px 34px; gap: 24px; }
+    section.plain { padding-top: 56px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="wordmark" href="./" aria-label="Ony home">ony</a>
+    <nav><a href="https://github.com/rohiitgit/ony">GitHub</a></nav>
+  </header>
+
+  <main>
+    <div class="stack">
+      <section class="hero" aria-labelledby="headline">
+        <div>
+          <h1 id="headline">Every song link, in your app.</h1>
+          <p class="lead">Friends send Spotify. You listen on Apple Music. <strong>Tap the link and Ony opens the same song where you listen</strong>, from Spotify, Apple Music, YouTube Music or YouTube.</p>
+          <div class="cta">
+            <a class="pill" href="download/">Download for Android</a>
+            <small id="version">Free and open source. No account.</small>
+          </div>
+        </div>
+
+        <div class="phone" role="img" aria-label="A friend sends a Spotify link in a chat. It is tapped, and a small Ony card slides up saying Opening in Apple Music, Finding the song, before the song opens.">
+          <div class="chat-head">Maya<span>online</span></div>
+          <p class="day">Today</p>
+          <div class="bubble">You have to hear this
+            <span class="link">open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b</span>
+          </div>
+          <span class="tap"></span>
+          <div class="card">
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="#FA2D48"><path d="M17 3v11.3a3.3 3.3 0 1 1-2-3V6.2l-6 1.5v8.6a3.3 3.3 0 1 1-2-3V6l10-3z"/></svg>
+            </span>
+            <span class="t">Opening in Apple Music</span>
+            <span class="s">Finding the song</span>
+            <span class="bar"></span>
+          </div>
+        </div>
+      </section>
+
+      <div class="pinch" aria-hidden="true"></div>
+
+      <ol class="how" aria-label="How it works">
+        <li>
+          <h3>Tap a song link</h3>
+          <p>In WhatsApp, a browser, anywhere. Android hands it to Ony.</p>
+        </li>
+        <li>
+          <h3>Ony finds the same song</h3>
+          <p>By title, artist and album, in your app's catalogue for your country.</p>
+        </li>
+        <li>
+          <h3>It plays in your app</h3>
+          <p>Usually a second or two. Ony shows a small card while it looks, then gets out of the way.</p>
+        </li>
+      </ol>
+    </div>
+
+    <section class="plain" aria-labelledby="works">
+      <h2 id="works">Works with the links people actually send</h2>
+      <p class="intro">Ony opens songs in Spotify, Apple Music or YouTube Music, whichever you use, from links to any of these:</p>
+      <ul class="apps">
+        <li>Spotify</li>
+        <li>Apple Music</li>
+        <li>YouTube Music</li>
+        <li>YouTube</li>
+      </ul>
+    </section>
+
+    <section class="plain" aria-labelledby="setup">
+      <h2 id="setup">Set it up once, then forget it</h2>
+      <p class="intro">Ony walks you through this the first time you open it and ticks off each step.</p>
+      <div class="rows">
+        <div class="row"><span class="n">1</span><span class="label">Pick your music app<small>Picked for you if only one is installed.</small></span><span class="state">Apple Music</span></div>
+        <div class="row"><span class="n">2</span><span class="label">Let Ony open music links<small>Android asks you to switch this on once, in Settings. Ony takes you there.</small></span><span class="state">On</span></div>
+        <div class="row"><span class="n">3</span><span class="label">Tap any song link<small>That's it. Ony stays out of your way after that.</small></span></div>
+      </div>
+    </section>
+
+    <section class="plain" aria-labelledby="faq">
+      <h2 id="faq">Questions</h2>
+      <p class="intro">Short answers. The code is on GitHub if you want the long ones.</p>
+      <div class="rows">
+        <details>
+          <summary>Is it free?</summary>
+          <div class="answer"><p><strong>Yes.</strong> No account, no ads, no subscription. Ony is open source under the MIT license.</p></div>
+        </details>
+        <details>
+          <summary>Why do I have to switch on links in Settings?</summary>
+          <div class="answer"><p>Since Android 12, only you can hand another company's links, Spotify's or YouTube's, to a different app. It keeps random apps from hijacking links. Ony can't do it for you, so it shows you exactly which switches to turn on.</p></div>
+        </details>
+        <details>
+          <summary>Does it work in my country?</summary>
+          <div class="answer"><p>Yes. Ony searches your music app's catalogue for the country your phone is in, so you get the version your store actually has. If your store doesn't carry a song, Ony opens the original link instead.</p></div>
+        </details>
+        <details>
+          <summary>What does Ony collect?</summary>
+          <div class="answer"><p><strong>Nothing.</strong> There's no Ony server. To find a song, your phone asks Apple's and YouTube Music's public search and reads Spotify's public song pages directly. Your app choice stays on your phone.</p></div>
+        </details>
+        <details>
+          <summary>I use Spotify. Does it work for me?</summary>
+          <div class="answer"><p>Yes, with one extra tap. Spotify has no free search Ony can use, so links open Spotify's search for the song, usually with the song at the top.</p></div>
+        </details>
+        <details>
+          <summary>Is there an iPhone version?</summary>
+          <div class="answer"><p>Not yet. Ony is Android only, version 8 and up.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="get">
+      <h2 id="get">Your app, every time.</h2>
+      <a class="pill" href="download/">Download for Android</a>
+    </section>
+  </main>
+
+  <footer>
+    <span>Ony, MIT license</span>
+    <nav>
+      <a href="https://github.com/rohiitgit/ony">Source</a>
+      <a href="https://github.com/rohiitgit/ony/releases">All versions</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+  // Show the newest version next to the download button. Quietly keeps the default text on failure.
+  fetch("https://api.github.com/repos/rohiitgit/ony/releases/latest")
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(r => {
+      const apk = r.assets.find(a => /^Ony-.*\.apk$/.test(a.name));
+      if (!apk) return;
+      const mb = (apk.size / 1048576).toFixed(1);
+      document.getElementById("version").textContent = `Version ${r.tag_name.replace(/^v/, "")}, ${mb} MB. Free and open source.`;
+    })
+    .catch(() => {});
+</script>
+</body>
+</html>

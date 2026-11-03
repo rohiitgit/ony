@@ -2,7 +2,7 @@
 
 Tap any song link and it opens in **your** music app.
 
-**[Download the latest Ony for Android](https://rohiitgit.github.io/ony/download/)** (saves as `Ony-<version>.apk`)
+**[Download the latest Ony for Android](https://rohiitgit.github.io/ony/download/)** (saves as `Ony-<version>.apk`) | [Website](https://rohiitgit.github.io/ony/)
 
 Open the download on your phone and tap Install (allow your browser to install apps if
 Android asks). If you opened the link inside another app (WhatsApp, GitHub) and the download

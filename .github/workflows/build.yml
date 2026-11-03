@@ -5,6 +5,10 @@ name: Build APK
 on:
   push:
     branches: [main]
+    # Website and docs-only pushes don't change the app, so they don't make a new release.
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
   workflow_dispatch:
 
 permissions:

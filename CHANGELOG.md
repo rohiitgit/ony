@@ -1,5 +1,16 @@
 # Changelog
 
+## [2026-11-03 11:35]
+- Landing page at rohiitgit.github.io/ony (`docs/index.html`), in the app's own design: ink
+  blocks on a pale page (dark palette in dark mode), lavender accent, Manrope served from the
+  site (`docs/fonts/`, with its OFL) so the page makes no third-party requests. Hero: a
+  friend's Spotify link is tapped in a chat and Ony's real card slides up ("Opening in Apple
+  Music / Finding the song"); still when reduced motion is on. The hero pinches into "How it
+  works" with the app's edge notches; FAQ rows open into ink panels like the app's rows.
+  Shows the latest version and size next to the download button. Copy checked against the
+  app's real behaviour (timings, Spotify's extra tap, setup).
+- CI: pushes that only touch `docs/` or Markdown no longer publish an identical app release.
+
 ## [2026-11-03 10:50]
 Code review fixes (10 findings).
 - Spotify localized links (`open.spotify.com/intl-de/track/...`) were rejected as "No music
