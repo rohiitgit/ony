@@ -10,6 +10,10 @@
   env vars (falls back to the debug key locally); never reads a MusicLink key on CI.
 - `docs/download/` (GitHub Pages): one-tap download of the newest `Ony-<version>.apk`, with
   a fallback link to the releases page. Linked at the top of the README.
+- First build (run 1) verified: release v0.1.1, `Ony-0.1.1.apk` signed with the release key
+  (SHA-256 2b4f…54d3), version code 1, no key-shaped strings, served as
+  `filename=Ony-0.1.1.apk`; the download page resolves to it. Actions bumped to current
+  majors (checkout v7, setup-java v6, setup-gradle v6) after Node 20 deprecation warnings.
 - Privacy before publishing: replaced a test string that held part of the real MusicLink
   key with a fake one; `.idea/` and `tasks/` (local notes) kept out of the repo; signing
   keys ignored.
