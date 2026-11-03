@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Try Ony</title>
+<meta name="description" content="Tap a sample song link to check Ony is set up: it should open in your music app.">
+<meta name="theme-color" content="#F8F9F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1517" media="(prefers-color-scheme: dark)">
+<style>
+  @font-face { font-family: "Manrope"; src: url("../fonts/manrope.ttf") format("truetype"); font-weight: 200 800; font-display: swap; }
+  :root { --page:#F8F9F6; --text:#10262A; --muted:#5F7174; --outline:#10262A; --bubble:#E9ECE8; --link:#3B6FD8; }
+  @media (prefers-color-scheme: dark) { :root { --page:#0B1517; --text:#EEF2F1; --muted:#8A9C9F; --outline:#4F676B; --bubble:#1A2E31; --link:#8DB3FF; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--text); font: 400 17px/1.55 "Manrope", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  main { width: min(560px, 100% - 32px); margin: 0 auto; padding: 36px 0 48px; }
+  .mark { font-weight: 300; font-size: 28px; letter-spacing: -0.04em; text-decoration: none; color: inherit; }
+  h1 { margin: 28px 0 6px; font-weight: 300; font-size: 36px; letter-spacing: -0.03em; line-height: 1.1; }
+  p.intro { margin: 0 0 28px; color: var(--muted); }
+  .day { text-align: center; font-size: 13px; color: var(--muted); margin: 0 0 10px; }
+  .bubble { max-width: 88%; padding: 12px 15px 13px; border-radius: 20px 20px 20px 6px; background: var(--bubble); }
+  .bubble a { display: block; margin-top: 4px; color: var(--link); word-break: break-all; text-underline-offset: 3px; }
+  h2 { margin: 40px 0 12px; font-weight: 500; font-size: 17px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  li a { display: flex; justify-content: space-between; gap: 12px; align-items: center; border: 1.2px solid var(--outline); border-radius: 28px; padding: 16px 20px; color: inherit; text-decoration: none; font-weight: 500; }
+  li a span { color: var(--muted); font-weight: 400; font-size: 14.5px; }
+  :focus-visible { outline: 2px solid #D3CCF6; outline-offset: 3px; }
+  footer { margin-top: 36px; color: var(--muted); font-size: 14.5px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="mark" href="../">ony</a>
+  <h1>Try Ony</h1>
+  <p class="intro">Tap a link on your phone. If Ony is set up, the song opens in your music app.</p>
+
+  <p class="day">Today</p>
+  <div class="bubble">You have to hear this
+    <a href="https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b">open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b</a>
+  </div>
+
+  <h2>More to try</h2>
+  <ul>
+    <li><a href="https://music.apple.com/us/album/never-gonna-give-you-up/1559885420?i=1559885421">Never Gonna Give You Up <span>Apple Music link</span></a></li>
+    <li><a href="https://music.youtube.com/watch?v=fsiPzT50ZiM">Tum Hi Ho <span>YouTube Music link</span></a></li>
+    <li><a href="https://www.youtube.com/watch?v=9bZkp7q19f0">Gangnam Style <span>YouTube link</span></a></li>
+  </ul>
+
+  <footer>Opens in your browser instead? Open Ony and finish setup.</footer>
+</main>
+</body>
+</html>
