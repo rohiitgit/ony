@@ -23,13 +23,13 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -102,9 +102,7 @@ private fun RedirectCard(link: MusicLink, caught: LinkKind?, tappedAt: Long, onD
 
     LaunchedEffect(link, target) {
         val app = target ?: return@LaunchedEffect
-        val outcome = Redirect.resolve(link, app, Prefs.apiKey(context))
-        if (outcome.lookedUp) Prefs.recordLookup(context)
-        val dest = outcome.destination
+        val dest = Redirect.resolve(link, app, Launch.country(context))
         val opened = dest != null && Launch.open(context, dest.url, dest.app.packageName)
         if (opened) Prefs.recordOpen(context, SystemClock.elapsedRealtime() - tappedAt)
         if (!opened) {

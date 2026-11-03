@@ -41,12 +41,6 @@ object Setup {
     fun linksAllowed(allowed: Set<String>?, target: MusicApp?): Boolean =
         allowed == null || kindsToCatch(target).all { kind -> kind.hosts.all { it in allowed } }
 
-    // MusicLink keys look like "st_" + hex. Loose on purpose: the key check is the real test.
-    private val KEY_SHAPE = Regex("""[A-Za-z]{2,8}_[A-Za-z0-9]{24,128}""")
-
-    /** The trimmed key if [text] looks like one (used to offer a just-copied key), else null. */
-    fun looksLikeKey(text: String?): String? = text?.trim()?.takeIf { KEY_SHAPE.matches(it) }
-
     /** Mean time from tap to song, "1.4 s", or a dash before the first redirect. */
     fun averageTime(totalMs: Long, count: Int): String {
         if (count <= 0) return "–"
@@ -54,7 +48,4 @@ object Setup {
         return "${tenths / 10}.${tenths % 10} s"
     }
 
-    /** MusicLink calls made this month, given the month the stored count belongs to. */
-    fun lookupsThisMonth(storedMonth: String?, count: Int, currentMonth: String): Int =
-        if (storedMonth == currentMonth) count else 0
 }

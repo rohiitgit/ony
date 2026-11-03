@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -18,15 +16,6 @@ android {
         val build = System.getenv("ONY_BUILD")?.toIntOrNull() ?: 1
         versionCode = build
         versionName = "0.1.$build"
-
-        // Personal builds only: a free MusicLink key from local.properties (musiclink.apiKey=...).
-        val localProps = Properties().apply {
-            rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
-        }
-        // Never on CI: published APKs carry no key, users paste their own in the app.
-        val onCi = System.getenv("CI") == "true"
-        val musicLinkKey = if (onCi) "" else localProps.getProperty("musiclink.apiKey", "").replace("\"", "")
-        buildConfigField("String", "MUSICLINK_API_KEY", "\"$musicLinkKey\"")
     }
 
     // Release key comes from the environment (CI secrets); it never lives in the repo.
@@ -58,7 +47,6 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 
@@ -73,8 +61,6 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-    // Custom Tabs: MusicLink sign-up opens in a browser tab over Ony, so coming back is one tap.
-    implementation("androidx.browser:browser:1.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
     testImplementation("junit:junit:4.13.2")

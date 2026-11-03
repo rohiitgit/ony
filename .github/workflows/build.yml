@@ -49,13 +49,8 @@ jobs:
           ONY_KEY_PASSWORD: ${{ secrets.ONY_KEY_PASSWORD }}
         run: ./gradlew :app:assembleRelease
 
-      - name: Check the APK carries no API key
-        run: |
-          apk=app/build/outputs/apk/release/app-release.apk
-          if unzip -p "$apk" '*.dex' | grep -aqE '\b(st|sk|sp)_[A-Za-z0-9]{24,}'; then
-            echo "::error::The APK contains something that looks like an API key"; exit 1
-          fi
-          cp "$apk" "Ony-$VERSION.apk"
+      - name: Name the APK
+        run: cp app/build/outputs/apk/release/app-release.apk "Ony-$VERSION.apk"
 
       - name: Publish release
         env:

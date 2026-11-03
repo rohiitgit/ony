@@ -54,21 +54,8 @@ class RedirectTest {
         )
     }
 
-    @Test fun instant_otherAppNeedsALookup() {
+    @Test fun instant_otherAppNeedsASearch() {
         assertNull(Redirect.instant(spotifyLink, MusicApp.APPLE_MUSIC))
         assertNull(Redirect.instant(ytLink, MusicApp.SPOTIFY))
-    }
-
-    // -- pick: choose from lookups --
-
-    @Test fun pick_firstLookupWithTheTargetWins() {
-        val musicLink = Lookup(null, listOf(Destination(MusicApp.APPLE_MUSIC, "https://music.apple.com/song/1")))
-        val itunes = Lookup(null, listOf(Destination(MusicApp.APPLE_MUSIC, "https://music.apple.com/song/2")))
-        assertEquals("https://music.apple.com/song/1", Redirect.pick(MusicApp.APPLE_MUSIC, musicLink, itunes)?.url)
-    }
-
-    @Test fun pick_nothingForTheTargetIsNull() {
-        val musicLink = Lookup(null, listOf(Destination(MusicApp.SPOTIFY, "https://open.spotify.com/track/x")))
-        assertNull(Redirect.pick(MusicApp.APPLE_MUSIC, musicLink, null))
     }
 }

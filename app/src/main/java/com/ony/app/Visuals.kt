@@ -34,8 +34,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -168,19 +168,8 @@ fun UnfoldingRow(
     }
 }
 
-/** Small lavender tag with spaced caps, for status. */
-@Composable
-fun Tag(text: String) {
-    Text(
-        text.uppercase(),
-        style = MaterialTheme.typography.labelLarge,
-        color = Ony.OnAccent,
-        modifier = Modifier.clip(RoundedCornerShape(7.dp)).background(Ony.Accent).padding(horizontal = 10.dp, vertical = 5.dp),
-    )
-}
-
-/** Pill button with spaced caps. Filled ink, outlined, or lavender for use on ink. */
-enum class PillStyle { INK, OUTLINE, LAVENDER, GHOST_ON_INK }
+/** Pill button with spaced caps: filled ink, outlined, or lavender. */
+enum class PillStyle { INK, OUTLINE, LAVENDER }
 
 @Composable
 fun PillButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, style: PillStyle = PillStyle.INK, enabled: Boolean = true) {
@@ -188,7 +177,6 @@ fun PillButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier,
         PillStyle.INK -> Triple(Ony.Block, Ony.OnBlock, null)
         PillStyle.OUTLINE -> Triple(Ony.Page, Ony.OnPage, Ony.Outline)
         PillStyle.LAVENDER -> Triple(Ony.Accent, Ony.OnAccent, null)
-        PillStyle.GHOST_ON_INK -> Triple(Color.Transparent, Ony.OnBlock, Ony.BlockMuted)
     }
     Box(
         modifier.heightIn(min = 48.dp).clip(RowShape).background(bg)

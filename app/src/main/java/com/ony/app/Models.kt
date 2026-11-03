@@ -14,7 +14,7 @@ data class MusicLink(
 data class Song(
     val title: String,
     val artist: String,
-    val artworkUrl: String? = null,
+    val album: String? = null,
 )
 
 /** An app a link can open in. Package names must also be listed in the manifest's <queries>. */
@@ -31,6 +31,3 @@ enum class MusicApp(val label: String, val packageName: String) {
 
 /** The exact song (never a search page), opened only in [app]. */
 data class Destination(val app: MusicApp, val url: String)
-
-/** What one lookup found: song details (if any) and exact links in other apps. */
-data class Lookup(val song: Song?, val matches: List<Destination>)

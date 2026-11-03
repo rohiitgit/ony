@@ -8,7 +8,7 @@ import java.net.URL
 /**
  * Link facts that need no matching service: where a link itself opens, short-link
  * expansion, and a YouTube video's twin in YouTube Music (same video id, so exact).
- * Every other match comes from MusicLinkApi.
+ * Every other match comes from Catalog.
  */
 object Resolver {
 

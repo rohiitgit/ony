@@ -43,17 +43,6 @@ class SetupTest {
         assertTrue(Setup.linksAllowed(null, MusicApp.SPOTIFY))
     }
 
-    @Test fun looksLikeKey_acceptsAKeyWithSurroundingSpace() {
-        assertEquals("st_0a1b2c3d4e5f60718293a4b5c6d7e8f9", Setup.looksLikeKey("  st_0a1b2c3d4e5f60718293a4b5c6d7e8f9\n"))
-    }
-
-    @Test fun looksLikeKey_rejectsOrdinaryClipboardText() {
-        assertNull(Setup.looksLikeKey("https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b"))
-        assertNull(Setup.looksLikeKey("see you at 8"))
-        assertNull(Setup.looksLikeKey("st_short"))
-        assertNull(Setup.looksLikeKey(null))
-    }
-
     // "Avg. time" on the setup screen: how long Ony takes from tap to song.
     @Test fun averageTime_noRedirectsYetIsADash() {
         assertEquals("–", Setup.averageTime(totalMs = 0, count = 0))
@@ -68,10 +57,4 @@ class SetupTest {
         assertEquals("2.1 s", Setup.averageTime(totalMs = 2_050, count = 1))
     }
 
-    // "Lookups" on the setup screen counts MusicLink calls this calendar month.
-    @Test fun lookupsThisMonth_countsOnlyTheCurrentMonth() {
-        assertEquals(7, Setup.lookupsThisMonth(storedMonth = "2026-11", count = 7, currentMonth = "2026-11"))
-        assertEquals(0, Setup.lookupsThisMonth(storedMonth = "2026-10", count = 7, currentMonth = "2026-11"))
-        assertEquals(0, Setup.lookupsThisMonth(storedMonth = null, count = 0, currentMonth = "2026-11"))
-    }
 }

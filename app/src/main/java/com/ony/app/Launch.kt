@@ -1,7 +1,6 @@
 package com.ony.app
 
 import android.content.ActivityNotFoundException
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,10 +9,11 @@ import android.content.pm.verify.domain.DomainVerificationUserState
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import androidx.browser.customtabs.CustomTabsIntent
+import android.telephony.TelephonyManager
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
+import java.util.Locale
 
 /** The Android side of opening things. Every open is pinned to a package, never left to Ony. */
 object Launch {
@@ -66,27 +66,18 @@ object Launch {
         return state.hostToStateMap.filterValues { it != DomainVerificationUserState.DOMAIN_STATE_NONE }.keys
     }
 
-    /** A web page in a browser tab over Ony (Custom Tab), so closing it lands back here. */
-    fun openWeb(context: Context, url: String) {
-        val tab = CustomTabsIntent.Builder().setShowTitle(true).build()
-        try {
-            tab.launchUrl(context, Uri.parse(url))
-        } catch (_: ActivityNotFoundException) {
-            browserPackage(context)?.let { open(context, url, it) }
-        }
-    }
-
-    /** Clipboard text. Android only allows this while Ony is in front with focus. */
-    fun clipboardText(context: Context): String? =
-        context.getSystemService(ClipboardManager::class.java)
-            ?.primaryClip?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.coerceToText(context)?.toString()
-
     /** Sends a link the way a tap in another app does, unpinned, to see who Android hands it to. */
     fun fireTestLink(context: Context, url: String) {
         context.startActivity(
             Intent(Intent.ACTION_VIEW, Uri.parse(url)).addCategory(Intent.CATEGORY_BROWSABLE)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
         )
+    }
+
+    /** The listener's country for store searches (rules in [Catalog.countryOf]). */
+    fun country(context: Context): String {
+        val tm = context.getSystemService(TelephonyManager::class.java)
+        return Catalog.countryOf(tm?.simCountryIso, tm?.networkCountryIso, Locale.getDefault().country)
     }
 
     /** An installed app's launcher icon, or null if it isn't installed. */

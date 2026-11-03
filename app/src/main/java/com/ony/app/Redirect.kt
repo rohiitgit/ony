@@ -2,11 +2,11 @@ package com.ony.app
 
 /**
  * Decides where a tapped link goes for someone who listens in one app.
- * Pure decisions plus one network orchestrator ([resolve]); no Android types.
+ * Pure decisions plus one orchestrator ([resolve]); no Android types.
  */
 object Redirect {
 
-    /** Apps a song can be redirected into. MusicLink returns exact links for these. */
+    /** Apps a song can be redirected into. */
     val TARGETS = listOf(MusicApp.SPOTIFY, MusicApp.APPLE_MUSIC, MusicApp.YOUTUBE_MUSIC)
 
     /** The listener's app: their choice if still installed, else the only installed one, else null (ask). */
@@ -17,22 +17,22 @@ object Redirect {
     fun instant(link: MusicLink, target: MusicApp): Destination? =
         listOfNotNull(Resolver.original(link), Resolver.youtubeMusicFor(link)).firstOrNull { it.app == target }
 
-    fun pick(target: MusicApp, vararg lookups: Lookup?): Destination? =
-        lookups.filterNotNull().flatMap { it.matches }.firstOrNull { it.app == target }
-
     /**
-     * The exact song in [target], or null when it can't be found there. Exact means the link
-     * itself, the same YouTube video, or MusicLink's match; never a search guess. MusicLink
-     * is only called when the link isn't already from [target], to save the allowance.
+     * The song in [target]: the link itself or the same YouTube video when possible, otherwise
+     * the song read from the link and found by name and artist in [target]'s catalogue for
+     * [country]. Spotify has no free search, so it gets its search screen for the song.
      */
-    suspend fun resolve(link: MusicLink, target: MusicApp, apiKey: String): Outcome {
-        instant(link, target)?.let { return Outcome(it, lookedUp = false) }
+    suspend fun resolve(link: MusicLink, target: MusicApp, country: String): Destination? {
+        instant(link, target)?.let { return it }
         val expanded = Resolver.expandShortLink(link)
-        instant(expanded, target)?.let { return Outcome(it, lookedUp = false) }
+        instant(expanded, target)?.let { return it }
 
-        return Outcome(pick(target, MusicLinkApi.lookup(expanded, apiKey)), lookedUp = apiKey.isNotBlank())
+        val song = Catalog.songFor(expanded) ?: return null
+        return when (target) {
+            MusicApp.APPLE_MUSIC -> Catalog.appleMusic(song, country)
+            MusicApp.YOUTUBE_MUSIC -> Catalog.youtubeMusic(song, country)
+            MusicApp.SPOTIFY -> Catalog.spotifySearch(song)
+            else -> null
+        }
     }
-
-    /** Where to go (null: not found), and whether MusicLink was asked, for the lookup count. */
-    data class Outcome(val destination: Destination?, val lookedUp: Boolean)
 }

@@ -1,5 +1,32 @@
 # Changelog
 
+## [2026-11-03 10:00]
+- MusicLink removed entirely: no account, no key, no monthly limit. A user's Apple Music
+  link from MusicLink opened "not available in your region": it pointed at the US release
+  ("Asi Gabhru Punjabi", 1585204443) while India's store sells "Asi Gabru Punjabi"
+  (1426290349). Ony now searches the listener's own store.
+- How: `Catalog` reads the song from the link (Spotify's public embed page, iTunes lookup for
+  Apple links, YouTube oEmbed plus YouTube Music's row for the same video, which also gives
+  the album), then searches the target's catalogue for the phone's country: iTunes Search
+  for Apple Music, YouTube Music's web search for YouTube Music. Spotify has no free search,
+  so it opens Spotify's search for "title artist" (one tap to play).
+- `Match` picks from results: same base title (one letter of slack from 8 characters, for
+  transliterations like Gabru/Gabhru), same version (remix, live, lo-fi, cover, parody...),
+  overlapping artist; the same album wins ties, ignoring edition suffixes ("Original
+  Motion Picture Soundtrack", "- Single", "Deluxe") and one-letter spellings (Judda/Judaa).
+  Album never rules a song out. Apple song links only ever use the exact linked track.
+- Country: SIM, then network, then region setting, then "us" (`Catalog.countryOf`, tested),
+  passed to both Apple and YouTube Music searches. Checked live: the same song resolves to
+  each store's own release in IN, GB, US and DE; when a store doesn't sell a song (the
+  Punjabi track in GB and CA), the original link opens.
+- Removed: `MusicLinkApi`, the key row and key panel, clipboard key detection, Custom Tabs
+  dependency, BuildConfig key, the Lookups stat, the CI key check. Setup is three steps.
+- Final build checked on the phone: the setup screen without the key row (two stats, two
+  setup rows), and the user's link opening Asi Gabru Punjabi in Apple Music again.
+- Earlier, before the album/tolerance refinements: the user's YouTube Music
+  link opened Asi Gabru Punjabi in Apple Music (India copy), played it in YouTube Music, and
+  showed it as the top song in Spotify's search. 66/66 tests, lint 0 errors.
+
 ## [2026-11-03 09:50]
 - Appearance switch is now an icon bar fixed at the bottom of the setup screen, like the
   reference's bottom bar: Auto (brightness-auto), Light (sun), Dark (moon), with the words
