@@ -7,7 +7,7 @@ package com.ony.app
 object Redirect {
 
     /** Apps a song can be redirected into. */
-    val TARGETS = listOf(MusicApp.SPOTIFY, MusicApp.APPLE_MUSIC, MusicApp.YOUTUBE_MUSIC, MusicApp.MELD)
+    val TARGETS = listOf(MusicApp.SPOTIFY, MusicApp.APPLE_MUSIC, MusicApp.YOUTUBE_MUSIC, MusicApp.MELD, MusicApp.BITCHORD)
 
     /** What to say when none of [TARGETS] is installed. */
     fun noAppMessage(): String {
@@ -25,7 +25,7 @@ object Redirect {
     /**
      * A destination in [target] that needs no lookup: the link itself when it's [target]'s own,
      * else a YouTube Music link as its plain YouTube Music watch URL, for any app playing that
-     * catalogue (YouTube Music, or Meld, which opens only some music.youtube.com paths).
+     * catalogue (YouTube Music, or Meld and BitChord, which open only some music.youtube.com paths).
      * Plain YouTube links (watch, Shorts, youtu.be…) never go here: only YouTube Music links
      * open in YouTube Music.
      */
@@ -40,12 +40,12 @@ object Redirect {
      * The song in [target]: the link itself or the same YouTube Music video when possible,
      * otherwise the song read from the link and found by name and artist in [target]'s catalogue
      * for [country]. Spotify has no free search, so it gets its search screen for the song.
-     * Meld opens what YouTube Music's catalogue finds. [songOf] and [search] are the network
+     * Meld and BitChord open what YouTube Music's catalogue finds. [songOf] and [search] are the network
      * calls, swappable in tests.
      *
-     * Plain YouTube links (watch, Shorts, youtu.be…) are never pulled into YouTube Music or
-     * Meld: they open where they belong, in YouTube, even when a catalogue search could match
-     * them. Only music.youtube.com links open in YouTube Music.
+     * Plain YouTube links (watch, Shorts, youtu.be…) are never pulled into YouTube Music,
+     * Meld or BitChord: they open where they belong, in YouTube, even when a catalogue search
+     * could match them. Only music.youtube.com links open in YouTube Music.
      */
     suspend fun resolve(
         link: MusicLink,

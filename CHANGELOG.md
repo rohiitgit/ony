@@ -1,5 +1,18 @@
 # Changelog
 
+## [2026-11-07]
+- BitChord (open-source YouTube Music client, `com.music.bitchord`) can be your music app.
+  It plays YouTube Music's catalogue, so like Meld it opens YouTube Music links as the plain
+  `music.youtube.com/watch?v=` URL (it declares those VIEW filters without `autoVerify`),
+  Spotify and Apple Music links are matched through the YouTube Music search and opened in
+  BitChord, and plain YouTube links still open in YouTube. No new search endpoint, URI
+  scheme, or setup step was needed: `MusicApp.catalogue` covers it, and the setup screen
+  already asks a BitChord listener to catch every link kind and to switch off YouTube
+  Music's link handling when both are installed. BitChord is in the app list Ony can see
+  (manifest `<queries>`), the setup choice, and the "install a music app" message.
+  Files: Models.kt, Redirect.kt, AndroidManifest.xml, RedirectTest.kt, SetupTest.kt,
+  README, IMPLEMENT.md, landing page.
+
 ## [2026-11-03 22:55]
 - Landing page "Works with": two chip rows, "Links from" (Spotify, Apple Music, YouTube
   Music, YouTube) and "Open in" as ink chips (Spotify, Apple Music, YouTube Music, Meld), so

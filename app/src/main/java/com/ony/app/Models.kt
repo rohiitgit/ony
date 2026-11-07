@@ -26,6 +26,7 @@ enum class MusicApp(val label: String, val packageName: String, private val play
     YOUTUBE_MUSIC("YouTube Music", "com.google.android.apps.youtube.music"),
     APPLE_MUSIC("Apple Music", "com.apple.android.music"),
     MELD("Meld", "com.meld.app", plays = YOUTUBE_MUSIC),
+    BITCHORD("BitChord", "com.music.bitchord", plays = YOUTUBE_MUSIC),
     YOUTUBE("YouTube", "com.google.android.youtube"),
     SOUNDCLOUD("SoundCloud", "com.soundcloud.android"),
     DEEZER("Deezer", "deezer.android.app"),

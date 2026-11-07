@@ -18,6 +18,12 @@ class SetupTest {
         assertEquals(LinkKind.entries, Setup.kindsToCatch(MusicApp.MELD))
     }
 
+    // Same for BitChord: it handles music.youtube.com links but doesn't own the kind,
+    // so a BitChord listener needs every kind caught too.
+    @Test fun kindsToCatch_bitChordListenerNeedsEveryKind() {
+        assertEquals(LinkKind.entries, Setup.kindsToCatch(MusicApp.BITCHORD))
+    }
+
     @Test fun kindsToCatch_noAppYetMeansAll() {
         assertEquals(LinkKind.entries, Setup.kindsToCatch(null))
     }

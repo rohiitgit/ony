@@ -62,6 +62,7 @@ class RedirectTest {
         )
         assertNull(Redirect.instant(shorts, MusicApp.YOUTUBE_MUSIC))
         assertNull(Redirect.instant(shorts, MusicApp.MELD))
+        assertNull(Redirect.instant(shorts, MusicApp.BITCHORD))
     }
 
     @Test fun instant_otherAppNeedsASearch() {
@@ -69,13 +70,17 @@ class RedirectTest {
         assertNull(Redirect.instant(ytLink, MusicApp.SPOTIFY))
     }
 
-    // Meld plays YouTube Music's catalogue: YouTube Music links open as the same video.
+    // Meld and BitChord play YouTube Music's catalogue: YouTube Music links open as the same video.
     // Plain YouTube links stay out: they open in YouTube instead.
     @Test fun instant_plainYoutubeVideoIsNotForMeld() {
         assertNull(Redirect.instant(ytLink, MusicApp.MELD))
     }
 
-    // Meld opens only some music.youtube.com paths, so it always gets the plain watch URL.
+    @Test fun instant_plainYoutubeVideoIsNotForBitChord() {
+        assertNull(Redirect.instant(ytLink, MusicApp.BITCHORD))
+    }
+
+    // Meld and BitChord open only some music.youtube.com paths, so they always get the plain watch URL.
     @Test fun instant_youtubeMusicLinkOpensInMeldAsTheWatchUrl() {
         val ytmLink = ytLink.copy(originalUrl = "https://music.youtube.com/watch?v=9bZkp7q19f0&si=abc")
         assertEquals(
@@ -84,10 +89,23 @@ class RedirectTest {
         )
     }
 
-    // A YouTube Music page that isn't a song (podcast, explore, home) isn't sent to Meld.
+    @Test fun instant_youtubeMusicLinkOpensInBitChordAsTheWatchUrl() {
+        val ytmLink = ytLink.copy(originalUrl = "https://music.youtube.com/watch?v=9bZkp7q19f0&si=abc")
+        assertEquals(
+            Destination(MusicApp.BITCHORD, "https://music.youtube.com/watch?v=9bZkp7q19f0"),
+            Redirect.instant(ytmLink, MusicApp.BITCHORD),
+        )
+    }
+
+    // A YouTube Music page that isn't a song (podcast, explore, home) isn't sent to Meld or BitChord.
     @Test fun instant_youtubeMusicPageThatIsNotASongIsNotForMeld() {
         val page = MusicLink(Provider.YOUTUBE, "search", null, originalUrl = "https://music.youtube.com/podcast/abc")
         assertNull(Redirect.instant(page, MusicApp.MELD))
+    }
+
+    @Test fun instant_youtubeMusicPageThatIsNotASongIsNotForBitChord() {
+        val page = MusicLink(Provider.YOUTUBE, "search", null, originalUrl = "https://music.youtube.com/podcast/abc")
+        assertNull(Redirect.instant(page, MusicApp.BITCHORD))
     }
 
     // The YouTube Music app itself still gets its own links untouched.
@@ -103,10 +121,18 @@ class RedirectTest {
         assertNull(Redirect.instant(spotifyLink, MusicApp.MELD))
     }
 
-    // Each app is searched in the catalogue it plays; Meld's is YouTube Music's.
+    @Test fun instant_spotifyLinkNeedsASearchForBitChord() {
+        assertNull(Redirect.instant(spotifyLink, MusicApp.BITCHORD))
+    }
+
+    // Each app is searched in the catalogue it plays; Meld's and BitChord's is YouTube Music's.
     @Test fun catalogue_ofMeldIsYoutubeMusic() {
         assertEquals(MusicApp.YOUTUBE_MUSIC, MusicApp.MELD.catalogue)
         assertEquals(MusicApp.APPLE_MUSIC, MusicApp.APPLE_MUSIC.catalogue)
+    }
+
+    @Test fun catalogue_ofBitChordIsYoutubeMusic() {
+        assertEquals(MusicApp.YOUTUBE_MUSIC, MusicApp.BITCHORD.catalogue)
     }
 
     // A Spotify link for a Meld listener: searched in YouTube Music for their country, opened in Meld.
@@ -126,6 +152,26 @@ class RedirectTest {
 
     @Test fun resolve_songNotFoundIsNull() = runTest {
         val found = Redirect.resolve(spotifyLink, MusicApp.MELD, "in", songOf = { Song("X", "Y") }, search = { _, _, _ -> null })
+        assertNull(found)
+    }
+
+    // A Spotify link for a BitChord listener: searched in YouTube Music for their country, opened in BitChord.
+    @Test fun resolve_bitChordOpensWhatYoutubeMusicSearchFinds() = runTest {
+        var searched: Pair<MusicApp, String>? = null
+        val found = Redirect.resolve(
+            spotifyLink, MusicApp.BITCHORD, "in",
+            songOf = { Song("Blinding Lights", "The Weeknd") },
+            search = { _, catalogue, country ->
+                searched = catalogue to country
+                Destination(catalogue, "https://music.youtube.com/watch?v=4NRXx6U8ABQ")
+            },
+        )
+        assertEquals(MusicApp.YOUTUBE_MUSIC to "in", searched)
+        assertEquals(Destination(MusicApp.BITCHORD, "https://music.youtube.com/watch?v=4NRXx6U8ABQ"), found)
+    }
+
+    @Test fun resolve_songNotFoundIsNullForBitChord() = runTest {
+        val found = Redirect.resolve(spotifyLink, MusicApp.BITCHORD, "in", songOf = { Song("X", "Y") }, search = { _, _, _ -> null })
         assertNull(found)
     }
 
@@ -158,6 +204,16 @@ class RedirectTest {
         assertEquals(Destination(MusicApp.YOUTUBE, shorts.originalUrl), found)
     }
 
+    @Test fun resolve_plainYoutubeOpensInYoutubeForBitChord() = runTest {
+        val shorts = ytLink.copy(originalUrl = "https://www.youtube.com/shorts/9bZkp7q19f0")
+        val found = Redirect.resolve(
+            shorts, MusicApp.BITCHORD, "in",
+            songOf = { error("must not look up a plain YouTube link") },
+            search = { _, _, _ -> error("must not search for a plain YouTube link") },
+        )
+        assertEquals(Destination(MusicApp.YOUTUBE, shorts.originalUrl), found)
+    }
+
     // The exact share-link shape from the YouTube app: bare host plus ?si= param.
     @Test fun resolve_shortsShareLinkOpensInYoutube() = runTest {
         val shared = MusicLink(
@@ -172,7 +228,7 @@ class RedirectTest {
         assertEquals(Destination(MusicApp.YOUTUBE, shared.originalUrl), found)
     }
 
-    // A YouTube Music link still opens in YouTube Music (and in Meld as the plain watch URL).
+    // A YouTube Music link still opens in YouTube Music (and in Meld and BitChord as the plain watch URL).
     @Test fun resolve_youtubeMusicLinkStaysInYoutubeMusic() = runTest {
         val ytm = ytLink.copy(originalUrl = "https://music.youtube.com/watch?v=9bZkp7q19f0&si=abc")
         val found = Redirect.resolve(
@@ -187,6 +243,12 @@ class RedirectTest {
             search = { _, _, _ -> error("must not search for an own link") },
         )
         assertEquals(Destination(MusicApp.MELD, "https://music.youtube.com/watch?v=9bZkp7q19f0"), forMeld)
+        val forBitChord = Redirect.resolve(
+            ytm, MusicApp.BITCHORD, "in",
+            songOf = { error("must not look up an own link") },
+            search = { _, _, _ -> error("must not search for an own link") },
+        )
+        assertEquals(Destination(MusicApp.BITCHORD, "https://music.youtube.com/watch?v=9bZkp7q19f0"), forBitChord)
     }
 
     // Other listeners are unaffected: a plain YouTube video is still read and searched.
@@ -205,11 +267,23 @@ class RedirectTest {
     }
 
     @Test fun noAppMessage_namesEveryTarget() {
-        assertEquals("Install Spotify, Apple Music, YouTube Music or Meld to use Ony.", Redirect.noAppMessage())
+        assertEquals("Install Spotify, Apple Music, YouTube Music, Meld or BitChord to use Ony.", Redirect.noAppMessage())
     }
 
     @Test fun choices_includeMeldWhenInstalled() {
         assertEquals(listOf(MusicApp.SPOTIFY, MusicApp.MELD), Redirect.choices(setOf(MusicApp.MELD, MusicApp.SPOTIFY)))
+    }
+
+    @Test fun choices_includeBitChordWhenInstalled() {
+        assertEquals(
+            listOf(MusicApp.SPOTIFY, MusicApp.MELD, MusicApp.BITCHORD),
+            Redirect.choices(setOf(MusicApp.BITCHORD, MusicApp.MELD, MusicApp.SPOTIFY)),
+        )
+    }
+
+    // BitChord alone installed is enough: no question asked.
+    @Test fun targetApp_onlyBitChordInstalledNeedsNoQuestion() {
+        assertEquals(MusicApp.BITCHORD, Redirect.targetApp(null, setOf(MusicApp.BITCHORD, MusicApp.YOUTUBE)))
     }
 
     // Only installed apps are offered; none installed means there's nothing to ask.
