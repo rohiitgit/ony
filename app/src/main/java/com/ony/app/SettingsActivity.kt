@@ -204,8 +204,8 @@ private fun SetupScreen(returns: Int) {
         )
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             UnfoldingRow("Your music app", target?.label ?: "Choose", appOpen, { appOpen = !appOpen }, panelPadding = 8.dp) {
-                Redirect.TARGETS.forEach { app ->
-                    InkChoice(app, chosen = app == target, installed = app in installed) {
+                Redirect.choices(installed).forEach { app ->
+                    InkChoice(app, chosen = app == target, installed = true) {
                         myApp = app
                         appOpen = false
                         scope.launch { Prefs.setMyApp(context, app) }
