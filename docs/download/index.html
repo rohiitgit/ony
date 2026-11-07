@@ -45,7 +45,8 @@
   <div class="help" id="help-android" hidden>
     <h2>Install on Android</h2>
     <ol>
-      <li>Tap <strong>Download Ony</strong> above. If Android asks, allow your browser to install apps.</li>
+      <li>Tap <strong>Download Ony</strong> above. It opens in <strong>Chrome</strong>, even if you opened this page inside another app. If Android asks, allow Chrome to install apps.</li>
+      <li>Chrome will warn <strong>"File might be harmful"</strong> and ask you to confirm. Tap <strong>Download anyway</strong>. It says that for every new version because that exact file is still new to Google; the APK is built by Ony's own release pipeline and signed with its release key.</li>
       <li>When the download finishes, open <strong><code id="apk-name">the APK</code></strong> and tap <strong>Install</strong>.</li>
       <li>Updating keeps your settings.</li>
     </ol>
@@ -90,14 +91,16 @@
       release.href = rel;
       release.hidden = false;
 
-      // On Android, try to hand the APK download to the browser app. In-app browsers (Custom Tabs
-      // from WhatsApp/GitHub/etc.) can receive the APK but never finish the download.
+      // On Android, hand the APK download to full Chrome, even from inside another app's
+      // in-app browser (Custom Tabs and WebViews receive the APK but never finish the
+      // download). Pinning the package opens real Chrome; without it the tap can stay in
+      // the in-app browser. The fallback keeps the old behaviour where Chrome is missing.
       if (android && /^https:\/\//i.test(url)) {
         var target = url.replace(/^https:\/\//i, "");
         var fallback = encodeURIComponent(url);
         download.href = "intent://" + target + "#Intent;scheme=https;action=android.intent.action.VIEW;" +
-          "S.browser_fallback_url=" + fallback + ";end";
-        status.textContent = "Tap to download in your browser, then open the file and tap Install.";
+          "package=com.android.chrome;S.browser_fallback_url=" + fallback + ";end";
+        status.textContent = "Tap to download in Chrome, then open the file and tap Install.";
       } else {
         download.href = url;
         status.textContent = android ? "Tap to download, then open the APK and tap Install." : "Download the APK and install it on your Android phone.";

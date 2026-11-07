@@ -6,7 +6,9 @@ Tap any song link and it opens in **your** music app.
 
 Open the download on your phone and tap Install (allow your browser to install apps if
 Android asks). If you opened the link inside another app (WhatsApp, GitHub) and the download
-stops at 100%, open it in Chrome instead: in-app browsers don't finish APK downloads. New versions install over old ones and keep your settings. Every push to
+stops at 100%, open it in Chrome instead: in-app browsers don't finish APK downloads. In Chrome,
+tap Download on the page (it opens outside any in-app browser) and confirm "Download anyway"
+if Chrome warns the file might be harmful — it says that for every new version. New versions install over old ones and keep your settings. Every push to
 `main` builds a new one; past versions are on the
 [Releases page](https://github.com/rohiitgit/ony/releases).
 
