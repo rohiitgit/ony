@@ -23,12 +23,15 @@ Android only, for now.
 
 ## How it works
 
-1. You tap a Spotify, Apple Music, YouTube Music or YouTube link (in WhatsApp, a browser,
+1. You tap a Spotify, Apple Music or YouTube Music link (in WhatsApp, a browser,
    anywhere).
 2. Android hands the link to Ony instead of the app it came from.
 3. Ony opens the same song in your app. No account, no API key.
    - If the link is already from your app, it opens right away.
-   - A YouTube video opens as the same video in YouTube Music or Meld.
+   - A YouTube Music link opens as the same video in YouTube Music or Meld.
+     Plain YouTube links (videos, Shorts, youtu.be) are never intercepted: they open
+     in YouTube itself, and Ony never asks anything about them. To match one as a
+     song, share it to Ony instead (see Setup below).
    - Otherwise Ony reads the song's title, artist and (where the link has it) album, then
      searches your app's catalogue for **your country** and opens the match. Apple Music
      uses Apple's public search, YouTube Music its own web search (Meld plays YouTube
@@ -54,16 +57,17 @@ Open Ony from your home screen. It walks you through these steps and shows what'
    installed, Ony picks it for you.
 2. **Let Ony open music links.** Android 12 and later sends each kind of web link to one
    app, with no "Open with" menu, and only you can hand another company's links (Spotify's,
-   Apple's, YouTube's) to a different app. Tap the row, then switch on all 7 addresses:
-   open.spotify.com, spotify.link, music.apple.com, music.youtube.com, youtube.com,
-   www.youtube.com and youtu.be. Until they're all on, Ony opens with a short sheet listing
+   Apple's, Google's) to a different app. Tap the row, then switch on all 4 addresses:
+   open.spotify.com, spotify.link, music.apple.com and music.youtube.com. Until they're
+   all on, Ony opens with a short sheet listing
    them, ticking each one that's done, with a button straight to the right Settings page.
-3. **Stop other apps grabbing their links.** Apps like YouTube (often preinstalled) open
+3. **Stop other apps grabbing their links.** The other music apps open
    their own links before Ony sees them. For each one Ony lists, turn off **Open supported
    links**.
 
 Prefer no setup at all? Use **Share → Ony** on any song link instead of tapping it: sharing
-works straight after installing.
+works straight after installing, and it's also how you match a YouTube video (videos,
+Shorts, youtu.be) as a song — those open in YouTube when tapped and are never intercepted.
 
 The setup screen reads every step's real state from Android, so a row only says "On" when
 that's true. The bar at the bottom picks the look: Auto (follows your phone), Light or Dark.
@@ -90,7 +94,7 @@ app/src/main/java/com/ony/app/
   Redirect.kt          where a link should go
   Catalog.kt           reads a link's song, searches Apple Music / YouTube Music by country
   Match.kt             picks the same song out of search results (pure, unit-tested)
-  Resolver.kt          short links, where a link opens, YouTube video to YouTube Music
+  Resolver.kt          short links, where a link opens, YouTube Music links to YouTube Music
   LinkParser.kt        URL parser for every supported service
   Launch.kt            Android side: installed apps, opening links, link settings
   Prefs.kt             your app and appearance (DataStore)

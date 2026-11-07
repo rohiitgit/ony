@@ -7,7 +7,8 @@ enum class LinkKind(val label: String, val owner: MusicApp, val hosts: List<Stri
     SPOTIFY("Spotify links", MusicApp.SPOTIFY, listOf("open.spotify.com", "spotify.link")),
     APPLE_MUSIC("Apple Music links", MusicApp.APPLE_MUSIC, listOf("music.apple.com")),
     YOUTUBE_MUSIC("YouTube Music links", MusicApp.YOUTUBE_MUSIC, listOf("music.youtube.com")),
-    YOUTUBE("YouTube links", MusicApp.YOUTUBE, listOf("youtube.com", "www.youtube.com", "youtu.be")),
+    // No YouTube kind: plain YouTube links (videos, Shorts, youtu.be) are meant for the
+    // YouTube app, so Ony never asks to open them. They still reach Ony via Share.
 }
 
 /** Pure answers for the setup screen: what still needs doing. */
@@ -34,5 +35,15 @@ object Setup {
     /** Null [allowed] means Android below 12, where the chooser appears and nothing needs allowing. */
     fun linksAllowed(allowed: Set<String>?, target: MusicApp?): Boolean =
         allowed == null || kindsToCatch(target).all { kind -> kind.hosts.all { it in allowed } }
+
+    /**
+     * True when the YouTube app is installed but its links are switched off (older Ony
+     * versions asked for that) while Ony no longer intercepts YouTube taps: Shorts and
+     * videos then fall through to the browser instead of YouTube. Only the user can switch
+     * YouTube's handling back on; no app can do it for them. Null [youtubeHandlesLinks]
+     * means Android won't say, so no row.
+     */
+    fun youtubeHandoffBroken(youtubeInstalled: Boolean, youtubeHandlesLinks: Boolean?): Boolean =
+        youtubeInstalled && youtubeHandlesLinks == false
 
 }

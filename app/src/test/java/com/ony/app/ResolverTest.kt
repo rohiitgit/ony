@@ -18,7 +18,7 @@ class ResolverTest {
         originalUrl = "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT",
     )
 
-    // Ony handles open.spotify.com and youtube.com itself, so an unpinned intent can loop back into Ony.
+    // Ony handles open.spotify.com itself, so an unpinned intent can loop back into Ony.
     @Test fun original_isPinnedToTheSourceApp() {
         assertEquals(Destination(MusicApp.SPOTIFY, spotifyLink.originalUrl), Resolver.original(spotifyLink))
         assertEquals(MusicApp.YOUTUBE, Resolver.original(ytLink)?.app)
@@ -30,10 +30,24 @@ class ResolverTest {
         assertNull(Resolver.original(unknown))
     }
 
-    @Test fun youtubeMusicFor_youtubeVideoIsTheSameVideoInYtMusic() {
+    @Test fun youtubeMusicFor_youtubeMusicLinkIsTheSameVideoAsPlainWatchUrl() {
         assertEquals(
             Destination(MusicApp.YOUTUBE_MUSIC, "https://music.youtube.com/watch?v=dQw4w9WgXcQ"),
-            Resolver.youtubeMusicFor(ytLink),
+            Resolver.youtubeMusicFor(ytMusicLink),
+        )
+    }
+
+    @Test fun youtubeMusicFor_plainYoutubeLinksHaveNone() {
+        assertNull(Resolver.youtubeMusicFor(ytLink))
+        assertNull(
+            Resolver.youtubeMusicFor(
+                MusicLink(Provider.YOUTUBE, "video", "dQw4w9WgXcQ", originalUrl = "https://www.youtube.com/shorts/dQw4w9WgXcQ")
+            )
+        )
+        assertNull(
+            Resolver.youtubeMusicFor(
+                MusicLink(Provider.YOUTUBE, "video", "dQw4w9WgXcQ", originalUrl = "https://youtu.be/dQw4w9WgXcQ")
+            )
         )
     }
 

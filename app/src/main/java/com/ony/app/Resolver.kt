@@ -7,8 +7,9 @@ import java.net.URL
 
 /**
  * Link facts that need no matching service: where a link itself opens, short-link
- * expansion, and a YouTube video's twin in YouTube Music (same video id, so exact).
- * Every other match comes from Catalog.
+ * expansion, and a YouTube Music link's twin as a plain watch URL (same video id, so exact).
+ * Plain YouTube links are never rewritten into YouTube Music. Every other match comes
+ * from Catalog.
  */
 object Resolver {
 
@@ -40,13 +41,16 @@ object Resolver {
         } catch (_: Exception) { link }
     }
 
-    /** The video itself in YouTube Music. Null unless [link] is a YouTube video. */
+    /** The video itself in YouTube Music — but only for actual YouTube Music links. Null otherwise. */
     fun youtubeMusicFor(link: MusicLink): Destination? =
-        if (link.provider == Provider.YOUTUBE && link.id != null) {
+        if (link.provider == Provider.YOUTUBE && link.id != null && isYouTubeMusicUrl(link)) {
             Destination(MusicApp.YOUTUBE_MUSIC, "https://music.youtube.com/watch?v=${link.id}")
         } else {
             null
         }
+
+    /** True when [link] came from music.youtube.com (a YouTube Music link, not plain YouTube). */
+    fun isYouTubeMusicUrl(link: MusicLink): Boolean = "://music.youtube.com" in link.originalUrl
 
     /** The tapped link itself, pinned to the app it belongs to. Null for unknown links. */
     fun original(link: MusicLink): Destination? {

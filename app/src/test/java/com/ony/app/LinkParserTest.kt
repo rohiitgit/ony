@@ -32,6 +32,14 @@ class LinkParserTest {
         assertEquals("dQw4w9WgXcQ", LinkParser.parse("https://www.youtube.com/shorts/dQw4w9WgXcQ")!!.id)
     }
 
+    // Shared from the YouTube app: bare host plus the ?si= share param.
+    @Test fun youtubeShortsShareLink() {
+        val l = LinkParser.parse("https://youtube.com/shorts/nSasVaEY8aw?si=ysb2dqaXFFAdWx-G")!!
+        assertEquals(Provider.YOUTUBE, l.provider)
+        assertEquals("video", l.kind)
+        assertEquals("nSasVaEY8aw", l.id)
+    }
+
     @Test fun rejectsNonMusic() {
         assertNull(LinkParser.parse("https://example.com/notmusic"))
         assertNull(LinkParser.parse("just some text no link"))

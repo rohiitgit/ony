@@ -24,8 +24,10 @@ object Redirect {
 
     /**
      * A destination in [target] that needs no lookup: the link itself when it's [target]'s own,
-     * else a YouTube video as its plain YouTube Music watch URL, for any app playing that
+     * else a YouTube Music link as its plain YouTube Music watch URL, for any app playing that
      * catalogue (YouTube Music, or Meld, which opens only some music.youtube.com paths).
+     * Plain YouTube links (watch, Shorts, youtu.be…) never go here: only YouTube Music links
+     * open in YouTube Music.
      */
     fun instant(link: MusicLink, target: MusicApp): Destination? {
         val ownLink = Resolver.original(link)?.takeIf { it.app == target }
@@ -35,11 +37,15 @@ object Redirect {
     }
 
     /**
-     * The song in [target]: the link itself or the same YouTube video when possible, otherwise
-     * the song read from the link and found by name and artist in [target]'s catalogue for
-     * [country]. Spotify has no free search, so it gets its search screen for the song.
+     * The song in [target]: the link itself or the same YouTube Music video when possible,
+     * otherwise the song read from the link and found by name and artist in [target]'s catalogue
+     * for [country]. Spotify has no free search, so it gets its search screen for the song.
      * Meld opens what YouTube Music's catalogue finds. [songOf] and [search] are the network
      * calls, swappable in tests.
+     *
+     * Plain YouTube links (watch, Shorts, youtu.be…) are never pulled into YouTube Music or
+     * Meld: they open where they belong, in YouTube, even when a catalogue search could match
+     * them. Only music.youtube.com links open in YouTube Music.
      */
     suspend fun resolve(
         link: MusicLink,
@@ -51,6 +57,13 @@ object Redirect {
         instant(link, target)?.let { return it }
         val expanded = Resolver.expandShortLink(link)
         instant(expanded, target)?.let { return it }
+
+        if (expanded.provider == Provider.YOUTUBE &&
+            !Resolver.isYouTubeMusicUrl(expanded) &&
+            target.catalogue == MusicApp.YOUTUBE_MUSIC
+        ) {
+            return Resolver.original(expanded)
+        }
 
         val song = songOf(expanded) ?: return null
         return search(song, target.catalogue, country)?.copy(app = target)

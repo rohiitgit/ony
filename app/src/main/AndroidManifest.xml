@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!-- Android 11+ hides other apps unless listed: the music apps Ony opens, and browsers. -->
     <queries>
@@ -29,6 +31,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ony">
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <!-- Setup screen, the only part of Ony anyone opens on purpose. -->
         <activity
             android:name=".SettingsActivity"
@@ -45,7 +57,7 @@
 
           Android 12+ has no "Open with" chooser for web links: the user must allow Ony to
           open these domains once (Settings > Apps > Ony > Open by default). Apps that
-          already own their links (YouTube, YouTube Music, Spotify, Apple Music) also need
+          already own their links (YouTube Music, Spotify, Apple Music) also need
           "Open supported links" turned off. SettingsActivity walks through both.
         -->
         <activity
@@ -85,21 +97,18 @@
                 <data android:scheme="https" android:host="music.apple.com" />
             </intent-filter>
 
-            <!-- YouTube / YouTube Music -->
+            <!-- YouTube Music -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" android:host="music.youtube.com" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="youtube.com" />
-                <data android:scheme="https" android:host="www.youtube.com" />
-                <data android:scheme="https" android:host="youtu.be" />
-            </intent-filter>
+            <!--
+              No filter for plain YouTube (youtube.com, youtu.be): those links are meant for
+              the YouTube app, so Ony never intercepts their taps. To match a YouTube video
+              as a song, share it to Ony instead (the SEND filter below).
+            -->
 
             <!-- Share target: the always-reliable path (Share → Ony) -->
             <intent-filter>

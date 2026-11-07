@@ -4,51 +4,143 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Download Ony</title>
+<meta name="description" content="Download the latest Ony APK for Android.">
+<meta name="theme-color" content="#F8F9F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1517" media="(prefers-color-scheme: dark)">
 <style>
-  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #F8F9F6; color: #10262A;
-         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  main { width: min(360px, 88vw); background: #10262A; color: #EEF2F1; border-radius: 26px; padding: 28px 24px; }
-  h1 { margin: 0 0 6px; font-weight: 300; font-size: 26px; letter-spacing: -0.5px; }
-  p { margin: 0 0 18px; color: #8A9EA3; font-size: 14px; }
-  a.button { display: block; text-align: center; padding: 14px; border-radius: 26px; background: #D3CCF6; color: #10262A;
-             font-weight: 700; font-size: 12px; letter-spacing: .6px; text-transform: uppercase; text-decoration: none; }
-  @media (prefers-color-scheme: dark) {
-    body { background: #0B1517; color: #EEF2F1; }
-    main { background: #1A2E31; }
-    p { color: #93A7AB; }
+  :root {
+    --page: #F8F9F6; --text: #10262A; --muted: #5F7174; --block: #10262A;
+    --on-block: #EEF2F1; --block-muted: #8A9EA3; --accent: #D3CCF6; --on-accent: #10262A;
   }
+  @media (prefers-color-scheme: dark) {
+    :root { --page: #0B1517; --text: #EEF2F1; --muted: #8A9C9F; --block: #1A2E31; --block-muted: #93A7AB; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--page); color: var(--text);
+         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; padding: 16px; }
+  main { width: min(420px, 100%); background: var(--block); color: var(--on-block); border-radius: 26px; padding: 28px 24px; }
+  h1 { margin: 0 0 6px; font-weight: 300; font-size: 30px; letter-spacing: -0.5px; }
+  p { margin: 0 0 12px; color: var(--block-muted); font-size: 14px; }
+  .version { color: var(--on-block); font-size: 14px; margin-bottom: 14px; }
+  a.button { display: block; text-align: center; padding: 14px 16px; border-radius: 26px; background: var(--accent); color: var(--on-accent);
+             font-weight: 700; font-size: 12px; letter-spacing: .6px; text-transform: uppercase; text-decoration: none; margin-top: 6px; }
+  a.secondary { display: block; text-align: center; padding: 10px 12px; color: var(--block-muted); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; margin-top: 8px; }
+  .help { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(238,242,241,.12); }
+  .help h2 { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--on-block); }
+  ol { margin: 0; padding-left: 18px; color: var(--block-muted); font-size: 13.5px; }
+  li + li { margin-top: 6px; }
+  strong { color: var(--on-block); font-weight: 600; }
+  code { font-size: 12.5px; }
+  .note { margin-top: 12px; font-size: 13px; }
 </style>
 </head>
 <body>
 <main>
   <h1>ony</h1>
   <p id="status">Finding the latest version…</p>
-  <a class="button" id="link" href="https://github.com/rohiitgit/ony/releases/latest">Open the releases page</a>
+  <p class="version" id="version" hidden></p>
+  <a class="button" id="download" href="https://github.com/rohiitgit/ony/releases/latest">Open releases</a>
+  <a class="secondary" id="release" href="https://github.com/rohiitgit/ony/releases/latest" hidden>View release notes</a>
+
+  <div class="help" id="help-android" hidden>
+    <h2>Install on Android</h2>
+    <ol>
+      <li>Tap <strong>Download Ony</strong> above. If Android asks, allow your browser to install apps.</li>
+      <li>When the download finishes, open <strong><code id="apk-name">the APK</code></strong> and tap <strong>Install</strong>.</li>
+      <li>Updating keeps your settings.</li>
+    </ol>
+    <p class="note"><strong>Download stuck at 100%?</strong> If you opened this link inside another app (WhatsApp, GitHub, Telegram, etc.), its in-app browser may not finish APK downloads. Open this page in <strong>Chrome</strong> and tap Download again.</p>
+  </div>
+
+  <div class="help" id="help-desktop" hidden>
+    <h2>Get it on your phone</h2>
+    <ol>
+      <li>Open <strong>https://rohiitgit.github.io/ony/download/</strong> on your Android phone, or send yourself this link.</li>
+      <li>Tap <strong>Download Ony</strong> and install the APK.</li>
+    </ol>
+  </div>
 </main>
 <script>
-  // Find the newest release's Ony-<version>.apk. On Android the button hands the download to
-  // the browser app: in-app browsers (Chrome Custom Tabs opened from WhatsApp, GitHub, etc.)
-  // receive the whole APK but never finish the download. Elsewhere it's a plain link.
-  const status = document.getElementById("status"), link = document.getElementById("link");
-  const android = /Android/i.test(navigator.userAgent);
-  fetch("https://api.github.com/repos/rohiitgit/ony/releases/latest")
-    .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(release => {
-      const apk = release.assets.find(a => /^Ony-.*\.apk$/.test(a.name));
-      if (!apk) throw new Error("no apk");
-      const url = apk.browser_download_url;
-      link.textContent = `Download ${apk.name}`;
-      if (android) {
-        const target = url.replace(/^https:\/\//, "");
-        link.href = `intent://${target}#Intent;scheme=https;action=android.intent.action.VIEW;` +
-                    `S.browser_fallback_url=${encodeURIComponent(url)};end`;
+  (function () {
+    var status = document.getElementById("status");
+    var versionEl = document.getElementById("version");
+    var download = document.getElementById("download");
+    var release = document.getElementById("release");
+    var apkName = document.getElementById("apk-name");
+    var android = /Android/i.test(navigator.userAgent);
+    document.getElementById(android ? "help-android" : "help-desktop").hidden = false;
+
+    function apply(data) {
+      var versionName = data.versionName || (data.tag ? data.tag.replace(/^v/, "") : "");
+      var url = data.downloadUrl || data.releaseUrl || data.pageUrl;
+      var rel = data.releaseUrl || ("https://github.com/rohiitgit/ony/releases/tag/" + (data.tag || ("v" + versionName)));
+      var name = "Ony-" + versionName + ".apk";
+      if (data.downloadUrl) {
+        var m = data.downloadUrl.match(/\/([^\/?#]+\.apk)(?:[?#]|$)/i);
+        if (m) name = decodeURIComponent(m[1]);
+      }
+      if (!url) throw new Error("no url");
+
+      if (versionName) {
+        versionEl.textContent = "Latest version: " + versionName + (data.versionCode ? " (build " + data.versionCode + ")" : "") + " for Android 8+.";
+        versionEl.hidden = false;
+      }
+      apkName.textContent = name;
+      download.textContent = "Download " + name;
+      release.href = rel;
+      release.hidden = false;
+
+      // On Android, try to hand the APK download to the browser app. In-app browsers (Custom Tabs
+      // from WhatsApp/GitHub/etc.) can receive the APK but never finish the download.
+      if (android && /^https:\/\//i.test(url)) {
+        var target = url.replace(/^https:\/\//i, "");
+        var fallback = encodeURIComponent(url);
+        download.href = "intent://" + target + "#Intent;scheme=https;action=android.intent.action.VIEW;" +
+          "S.browser_fallback_url=" + fallback + ";end";
         status.textContent = "Tap to download in your browser, then open the file and tap Install.";
       } else {
-        link.href = url;
-        status.textContent = `Ony ${release.tag_name.replace(/^v/, "")} for Android.`;
+        download.href = url;
+        status.textContent = android ? "Tap to download, then open the APK and tap Install." : "Download the APK and install it on your Android phone.";
       }
-    })
-    .catch(() => { status.textContent = "Couldn't reach GitHub. Get the newest Ony from the releases page."; });
+    }
+
+    function fromManifest(m) {
+      return {
+        versionName: m.versionName,
+        versionCode: m.versionCode,
+        tag: m.tag,
+        downloadUrl: m.downloadUrl,
+        releaseUrl: m.releaseUrl,
+        pageUrl: m.pageUrl
+      };
+    }
+
+    function fromGitHub(release) {
+      var apk = (release.assets || []).find(function (a) { return /^Ony-.*\.apk$/i.test(a.name); });
+      return {
+        versionName: (release.tag_name || "").replace(/^v/, ""),
+        versionCode: null,
+        tag: release.tag_name,
+        downloadUrl: apk && apk.browser_download_url,
+        releaseUrl: release.html_url
+      };
+    }
+
+    // Prefer the static manifest published with releases (fast, GitHub Pages). Fall back to the
+    // GitHub Releases API if the manifest is unavailable or stale in local testing.
+    fetch("../version.json", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function (m) { apply(fromManifest(m)); })
+      .catch(function () {
+        return fetch("https://api.github.com/repos/rohiitgit/ony/releases/latest")
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+          .then(function (r) { apply(fromGitHub(r)); })
+          .catch(function () {
+            status.textContent = "Couldn't load the latest version. Get Ony from the releases page.";
+            document.getElementById(android ? "help-android" : "help-desktop").hidden = false;
+          });
+      });
+  })();
 </script>
 </body>
 </html>
